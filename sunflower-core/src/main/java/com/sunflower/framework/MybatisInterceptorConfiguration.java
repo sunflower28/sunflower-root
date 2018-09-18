@@ -13,9 +13,16 @@ public class MybatisInterceptorConfiguration {
     public MybatisInterceptorConfiguration() {
     }
 
+    /**
+     * mybatis-plus分页插件<br>
+     * 文档：http://mp.baomidou.com<br>
+     */
     @Bean
     public PaginationInterceptor paginationInterceptor() {
-        return new PaginationInterceptor();
+        PaginationInterceptor paginationInterceptor = new PaginationInterceptor();
+        // 开启 PageHelper 的支持
+        paginationInterceptor.setLocalPage(true);
+        return paginationInterceptor;
     }
 
     @Bean

@@ -83,7 +83,7 @@ public class ApiServiceValidAop {
             }
         }
 
-        if (errorMessages.isEmpty()) {
+        if (!errorMessages.isEmpty()) {
             BusinessException businessException = new BusinessException(CommonEnum.PARAM_VALID_FAIL);
             businessException.setData(errorMessages);
             throw businessException;

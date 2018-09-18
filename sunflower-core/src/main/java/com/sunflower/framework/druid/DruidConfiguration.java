@@ -74,8 +74,8 @@ public class DruidConfiguration {
 
         try {
             datasource.setFilters(this.filters);
-        } catch (SQLException var4) {
-            logger.error("druid configuration initialization filter: ", var4);
+        } catch (SQLException e) {
+            logger.error("druid configuration initialization filter: ", e);
         }
 
         datasource.setConnectionProperties(this.connectionProperties);
@@ -111,6 +111,14 @@ public class DruidConfiguration {
 
     public String getUsername() {
         return this.username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getDriverClassName() {
