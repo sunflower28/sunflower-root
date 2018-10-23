@@ -2,12 +2,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <parent>
-        <artifactId>sunflower-root</artifactId>
-        <groupId>com.sunflower</groupId>
-        <version>0.0.1-SNAPSHOT</version>
-    </parent>
     <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>sunflower</groupId>
+        <artifactId>sunflower-root</artifactId>
+        <version>0.0.1</version>
+    </parent>
 
     <artifactId>sunflower-stateless</artifactId>
     <dependencies>
@@ -17,7 +17,7 @@
             <optional>true</optional>
         </dependency>
         <dependency>
-            <groupId>com.sunflower</groupId>
+            <groupId>sunflower</groupId>
             <artifactId>sunflower-api</artifactId>
             <version>${project.version}</version>
         </dependency>

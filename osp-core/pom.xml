@@ -5,9 +5,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.sunflower</groupId>
+        <groupId>sunflower</groupId>
         <artifactId>sunflower-root</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>0.0.1</version>
     </parent>
     <artifactId>osp-core</artifactId>
 
@@ -22,7 +22,7 @@
             <optional>true</optional>
         </dependency>
         <dependency>
-            <groupId>com.sunflower</groupId>
+            <groupId>sunflower</groupId>
             <artifactId>sunflower-api</artifactId>
             <version>${project.version}</version>
         </dependency>
