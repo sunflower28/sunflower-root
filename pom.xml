@@ -4,19 +4,20 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>sunflower</groupId>
+        <groupId>com.sunflower</groupId>
         <artifactId>sunflower-parent</artifactId>
-        <version>0.0.1-beta</version>
+        <version>0.0.1-SNAPSHOT</version>
     </parent>
     <groupId>sunflower</groupId>
     <artifactId>sunflower-root</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <modules>
         <module>sunflower-core</module>
         <module>sunflower-api</module>
 		<module>osp-core</module>
         <module>sunflower-stateless</module>
+        <module>sunflower-jxls-core</module>
     </modules>
 
 
