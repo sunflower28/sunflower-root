@@ -10,33 +10,36 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 
 @Configuration
 public class RestTemplateConfig {
-    public RestTemplateConfig() {
-    }
 
-    @LoadBalanced
-    @Bean
-    public RestTemplateUtil loadBalanced(ClientHttpRequestFactory requestFactory, MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter) {
-        RestTemplateUtil restTemplateUtil = new RestTemplateUtil();
-        restTemplateUtil.getMessageConverters().add(mappingJackson2HttpMessageConverter);
-        restTemplateUtil.setRequestFactory(requestFactory);
-        return restTemplateUtil;
-    }
+	public RestTemplateConfig() {
+	}
 
-    @Bean
-    @Primary
-    public RestTemplateUtil restTemplateUtil(ClientHttpRequestFactory requestFactory, MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter) {
-        RestTemplateUtil restTemplateUtil = new RestTemplateUtil();
-        restTemplateUtil.getMessageConverters().add(mappingJackson2HttpMessageConverter);
-        restTemplateUtil.setRequestFactory(requestFactory);
-        return restTemplateUtil;
-    }
+	@LoadBalanced
+	@Bean
+	public RestTemplateUtil loadBalanced(ClientHttpRequestFactory requestFactory,
+			MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter) {
+		RestTemplateUtil restTemplateUtil = new RestTemplateUtil();
+		restTemplateUtil.getMessageConverters().add(mappingJackson2HttpMessageConverter);
+		restTemplateUtil.setRequestFactory(requestFactory);
+		return restTemplateUtil;
+	}
 
-    @Bean
-    public ClientHttpRequestFactory simpleClientHttpRequestFactory() {
-        SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
-        factory.setReadTimeout(5000);
-        factory.setConnectTimeout(3000);
-        return factory;
-    }
+	@Bean
+	@Primary
+	public RestTemplateUtil restTemplateUtil(ClientHttpRequestFactory requestFactory,
+			MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter) {
+		RestTemplateUtil restTemplateUtil = new RestTemplateUtil();
+		restTemplateUtil.getMessageConverters().add(mappingJackson2HttpMessageConverter);
+		restTemplateUtil.setRequestFactory(requestFactory);
+		return restTemplateUtil;
+	}
+
+	@Bean
+	public ClientHttpRequestFactory simpleClientHttpRequestFactory() {
+		SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
+		factory.setReadTimeout(5000);
+		factory.setConnectTimeout(3000);
+		return factory;
+	}
+
 }
-

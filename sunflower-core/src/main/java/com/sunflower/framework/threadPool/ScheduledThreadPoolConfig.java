@@ -7,12 +7,14 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 @Configuration
 public class ScheduledThreadPoolConfig {
-    public ScheduledThreadPoolConfig() {
-    }
 
-    @Bean
-    public ScheduledThreadPoolExecutor scheduledExecutorService() {
-        ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(10);
-        return executor;
-    }
+	public ScheduledThreadPoolConfig() {
+	}
+
+	@Bean
+	public ScheduledThreadPoolExecutor scheduledExecutorService() {
+		ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(10);
+		return executor;
+	}
+
 }

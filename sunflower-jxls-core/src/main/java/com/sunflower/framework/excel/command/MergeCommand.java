@@ -21,172 +21,183 @@ import org.jxls.transform.poi.PoiCellData;
 import org.jxls.transform.poi.PoiTransformer;
 
 /**
- * <p>合并单元格</p>
- * jx:merge(
- *  lastCell="单元格"
- *  [, cols="合并的列数"]
- *  [, rows="合并的行数"]
- *  [, minCols="最小合并的列数"]
- *  [, minRows="最小合并的行数"]
- * )
+ * <p>
+ * 合并单元格
+ * </p>
+ * jx:merge( lastCell="单元格" [, cols="合并的列数"] [, rows="合并的行数"] [, minCols="最小合并的列数"] [,
+ * minRows="最小合并的行数"] )
+ *
  * @Author lnk
  * @Date 2018/1/23
  */
-public class MergeCommand extends AbstractCommand{
-    /**
-     * 合并的列数
-     */
-    private String cols;
-    /**
-     * 合并的行数
-     */
-    private String rows;
-    /**
-     * 最小合并的列数
-     */
-    private String minCols;
-    /**
-     * 最小合并的行数
-     */
-    private String minRows;
-    /**
-     * 第一个单元格的样式
-     */
-    private CellStyle cellStyle;
+public class MergeCommand extends AbstractCommand {
 
-    private Area area;
+	/**
+	 * 合并的列数
+	 */
+	private String cols;
 
-    @Override
-    public String getName() {
-        return "merge";
-    }
+	/**
+	 * 合并的行数
+	 */
+	private String rows;
 
-    @Override
-    public Command addArea(Area area) {
-        if (super.getAreaList().size() >= 1) {
-            throw new IllegalArgumentException("You can add only a single area to 'merge' command");
-        }
-        this.area = area;
-        return super.addArea(area);
-    }
+	/**
+	 * 最小合并的列数
+	 */
+	private String minCols;
 
-    @Override
-    public Size applyAt(CellRef cellRef, Context context) {
-        int rows = area.getSize().getHeight();
-        int cols = area.getSize().getWidth();
-        rows = Math.max(getVal(this.rows, context), rows);
-        cols = Math.max(getVal(this.cols, context), cols);
-        rows = Math.max(getVal(this.minRows, context), rows);
-        cols = Math.max(getVal(this.minCols, context), cols);
-        if(rows > 1 || cols > 1){
-            Transformer transformer = this.getTransformer();
-            if(transformer instanceof PoiTransformer){
-                poiMerge(cellRef, context, (PoiTransformer)transformer, rows, cols);
-            }else if(transformer instanceof JexcelTransformer){
-                jexcelMerge(cellRef, context, (JexcelTransformer)transformer, rows, cols);
-            }
-        }
-        area.applyAt(cellRef, context);
-        return new Size(cols, rows);
-    }
+	/**
+	 * 最小合并的行数
+	 */
+	private String minRows;
 
-    protected Size poiMerge(CellRef cellRef, Context context, PoiTransformer transformer, int rows, int cols){
-        Sheet sheet = transformer.getWorkbook().getSheet(cellRef.getSheetName());
-        CellRangeAddress region = new CellRangeAddress(
-                cellRef.getRow(),
-                cellRef.getRow() + rows - 1,
-                cellRef.getCol(),
-                cellRef.getCol() + cols - 1);
-        sheet.addMergedRegion(region);
+	/**
+	 * 第一个单元格的样式
+	 */
+	private CellStyle cellStyle;
 
-        //合并之后单元格样式会丢失，以下操作将合并后的单元格恢复成合并前第一个单元格的样式
-        area.applyAt(cellRef, context);
-        if(cellStyle == null){
-            PoiCellData cellData = (PoiCellData)transformer.getCellData(area.getStartCellRef());
-            if(cellData != null){
-                cellStyle = cellData.getCellStyle();
-            }
-        }
-        setRegionStyle(cellStyle, region, sheet);
-        return new Size(cols, rows);
-    }
+	private Area area;
 
-    protected Size jexcelMerge(CellRef cellRef, Context context, JexcelTransformer transformer, int rows, int cols){
-        try {
-            transformer.getWritableWorkbook().getSheet(cellRef.getSheetName())
-                    .mergeCells(
-                            cellRef.getRow(),
-                            cellRef.getCol(),
-                            cellRef.getRow() + rows - 1 ,
-                            cellRef.getCol() + cols - 1);
-            area.applyAt(cellRef, context);
-        } catch (WriteException e) {
-            throw new IllegalArgumentException("合并单元格失败");
-        }
-        return new Size(cols, rows);
-    }
+	@Override
+	public String getName() {
+		return "merge";
+	}
 
-    private static void setRegionStyle(CellStyle cs, CellRangeAddress region, Sheet sheet) {
-        for (int i = region.getFirstRow(); i <= region.getLastRow(); i++) {
-            Row row = sheet.getRow(i);
-            if (row == null) {
-                row = sheet.createRow(i);
-            }for (int j = region.getFirstColumn(); j <= region.getLastColumn(); j++) {
-                Cell cell = row.getCell(j);
-                if (cell == null) {
-                    cell = row.createCell(j);
-                }
-                if (cs == null){
-                    cell.getCellStyle().setAlignment(HorizontalAlignment.CENTER);
-                    cell.getCellStyle().setVerticalAlignment(VerticalAlignment.CENTER);
-                }else {
-                    cell.setCellStyle(cs);
-                }
-            }
-        }
-    }
+	@Override
+	public Command addArea(Area area) {
+		if (super.getAreaList().size() >= 1) {
+			throw new IllegalArgumentException(
+					"You can add only a single area to 'merge' command");
+		}
+		this.area = area;
+		return super.addArea(area);
+	}
 
-    private int getVal(String expression, Context context){
-        if(JxlsUtil.me().hasText(expression)){
-            Object obj = getTransformationConfig().getExpressionEvaluator().evaluate(expression, context.toMap());
-            try {
-                return Integer.parseInt(obj.toString());
-            } catch (NumberFormatException e) {
-                throw new IllegalArgumentException("表达式：" + expression + " 解析失败");
-            }
-        }
-        return 0;
-    }
+	@Override
+	public Size applyAt(CellRef cellRef, Context context) {
+		int rows = area.getSize().getHeight();
+		int cols = area.getSize().getWidth();
+		rows = Math.max(getVal(this.rows, context), rows);
+		cols = Math.max(getVal(this.cols, context), cols);
+		rows = Math.max(getVal(this.minRows, context), rows);
+		cols = Math.max(getVal(this.minCols, context), cols);
+		if (rows > 1 || cols > 1) {
+			Transformer transformer = this.getTransformer();
+			if (transformer instanceof PoiTransformer) {
+				poiMerge(cellRef, context, (PoiTransformer) transformer, rows, cols);
+			}
+			else if (transformer instanceof JexcelTransformer) {
+				jexcelMerge(cellRef, context, (JexcelTransformer) transformer, rows,
+						cols);
+			}
+		}
+		area.applyAt(cellRef, context);
+		return new Size(cols, rows);
+	}
 
-    public String getCols() {
-        return cols;
-    }
+	protected Size poiMerge(CellRef cellRef, Context context, PoiTransformer transformer,
+			int rows, int cols) {
+		Sheet sheet = transformer.getWorkbook().getSheet(cellRef.getSheetName());
+		CellRangeAddress region = new CellRangeAddress(cellRef.getRow(),
+				cellRef.getRow() + rows - 1, cellRef.getCol(),
+				cellRef.getCol() + cols - 1);
+		sheet.addMergedRegion(region);
 
-    public void setCols(String cols) {
-        this.cols = cols;
-    }
+		// 合并之后单元格样式会丢失，以下操作将合并后的单元格恢复成合并前第一个单元格的样式
+		area.applyAt(cellRef, context);
+		if (cellStyle == null) {
+			PoiCellData cellData = (PoiCellData) transformer
+					.getCellData(area.getStartCellRef());
+			if (cellData != null) {
+				cellStyle = cellData.getCellStyle();
+			}
+		}
+		setRegionStyle(cellStyle, region, sheet);
+		return new Size(cols, rows);
+	}
 
-    public String getRows() {
-        return rows;
-    }
+	protected Size jexcelMerge(CellRef cellRef, Context context,
+			JexcelTransformer transformer, int rows, int cols) {
+		try {
+			transformer.getWritableWorkbook().getSheet(cellRef.getSheetName()).mergeCells(
+					cellRef.getRow(), cellRef.getCol(), cellRef.getRow() + rows - 1,
+					cellRef.getCol() + cols - 1);
+			area.applyAt(cellRef, context);
+		}
+		catch (WriteException e) {
+			throw new IllegalArgumentException("合并单元格失败");
+		}
+		return new Size(cols, rows);
+	}
 
-    public void setRows(String rows) {
-        this.rows = rows;
-    }
+	private static void setRegionStyle(CellStyle cs, CellRangeAddress region,
+			Sheet sheet) {
+		for (int i = region.getFirstRow(); i <= region.getLastRow(); i++) {
+			Row row = sheet.getRow(i);
+			if (row == null) {
+				row = sheet.createRow(i);
+			}
+			for (int j = region.getFirstColumn(); j <= region.getLastColumn(); j++) {
+				Cell cell = row.getCell(j);
+				if (cell == null) {
+					cell = row.createCell(j);
+				}
+				if (cs == null) {
+					cell.getCellStyle().setAlignment(HorizontalAlignment.CENTER);
+					cell.getCellStyle().setVerticalAlignment(VerticalAlignment.CENTER);
+				}
+				else {
+					cell.setCellStyle(cs);
+				}
+			}
+		}
+	}
 
-    public String getMinCols() {
-        return minCols;
-    }
+	private int getVal(String expression, Context context) {
+		if (JxlsUtil.me().hasText(expression)) {
+			Object obj = getTransformationConfig().getExpressionEvaluator()
+					.evaluate(expression, context.toMap());
+			try {
+				return Integer.parseInt(obj.toString());
+			}
+			catch (NumberFormatException e) {
+				throw new IllegalArgumentException("表达式：" + expression + " 解析失败");
+			}
+		}
+		return 0;
+	}
 
-    public void setMinCols(String minCols) {
-        this.minCols = minCols;
-    }
+	public String getCols() {
+		return cols;
+	}
 
-    public String getMinRows() {
-        return minRows;
-    }
+	public void setCols(String cols) {
+		this.cols = cols;
+	}
 
-    public void setMinRows(String minRows) {
-        this.minRows = minRows;
-    }
+	public String getRows() {
+		return rows;
+	}
+
+	public void setRows(String rows) {
+		this.rows = rows;
+	}
+
+	public String getMinCols() {
+		return minCols;
+	}
+
+	public void setMinCols(String minCols) {
+		this.minCols = minCols;
+	}
+
+	public String getMinRows() {
+		return minRows;
+	}
+
+	public void setMinRows(String minRows) {
+		this.minRows = minRows;
+	}
+
 }

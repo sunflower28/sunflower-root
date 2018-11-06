@@ -9,17 +9,19 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 @Configuration
 public class ThreadPoolConfig {
-    public ThreadPoolConfig() {
-    }
 
-    @Bean
-    public Executor executor() {
-        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setQueueCapacity(50);
-        executor.setKeepAliveSeconds(10);
-        executor.setThreadNamePrefix("SunflowerExecutor-");
-        executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
-        executor.initialize();
-        return executor;
-    }
+	public ThreadPoolConfig() {
+	}
+
+	@Bean
+	public Executor executor() {
+		ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+		executor.setQueueCapacity(50);
+		executor.setKeepAliveSeconds(10);
+		executor.setThreadNamePrefix("SunflowerExecutor-");
+		executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
+		executor.initialize();
+		return executor;
+	}
+
 }

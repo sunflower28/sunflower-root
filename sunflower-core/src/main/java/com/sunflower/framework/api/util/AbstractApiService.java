@@ -14,94 +14,100 @@ import java.lang.reflect.Field;
 import java.util.*;
 
 /**
- *
  * @author sunflower
  */
 public class AbstractApiService {
 
-    protected static final Logger LOGGER = LoggerFactory.getLogger(AbstractApiService.class);
+	protected static final Logger LOGGER = LoggerFactory
+			.getLogger(AbstractApiService.class);
 
-    public AbstractApiService() {
-    }
+	public AbstractApiService() {
+	}
 
-    public static <K,V> Map<K,V> list2MapByKey(List<V> list,String property) {
-        if (list == null || CollectionUtils.isEmpty(list)) {
-            return Collections.emptyMap();
-        } else {
-            Map<Object, Object> map = new LinkedHashMap<>(list.size());
-            Iterator<V> iterator = list.iterator();
-            while (iterator.hasNext()) {
-                V v = iterator.next();
-                Field field = ReflectionUtils.findField(v.getClass(), property);
-                if (null == field) {
-                    throw new RuntimeException(v.getClass() + "不存在的属性" + property);
-                }
+	public static <K, V> Map<K, V> list2MapByKey(List<V> list, String property) {
+		if (list == null || CollectionUtils.isEmpty(list)) {
+			return Collections.emptyMap();
+		}
+		else {
+			Map<Object, Object> map = new LinkedHashMap<>(list.size());
+			Iterator<V> iterator = list.iterator();
+			while (iterator.hasNext()) {
+				V v = iterator.next();
+				Field field = ReflectionUtils.findField(v.getClass(), property);
+				if (null == field) {
+					throw new RuntimeException(v.getClass() + "不存在的属性" + property);
+				}
 
-                ReflectionUtils.makeAccessible(field);
-                K fieldValue = (K) ReflectionUtils.getField(field, v);
-                map.put(fieldValue,v);
-            }
-            return (Map<K, V>) map ;
-        }
-    }
+				ReflectionUtils.makeAccessible(field);
+				K fieldValue = (K) ReflectionUtils.getField(field, v);
+				map.put(fieldValue, v);
+			}
+			return (Map<K, V>) map;
+		}
+	}
 
-    public static <T> Set<T> list2Set(List<?> list, String property) {
-        if (list == null) {
-            return Collections.emptySet();
-        } else {
-            Set<T> set = new HashSet(list.size());
-            Iterator var3 = list.iterator();
+	public static <T> Set<T> list2Set(List<?> list, String property) {
+		if (list == null) {
+			return Collections.emptySet();
+		}
+		else {
+			Set<T> set = new HashSet(list.size());
+			Iterator var3 = list.iterator();
 
-            while(var3.hasNext()) {
-                Object v = var3.next();
-                Field field = ReflectionUtils.findField(v.getClass(), property);
-                if (null == field) {
-                    throw new RuntimeException(v.getClass() + "不存在属性" + property);
-                }
+			while (var3.hasNext()) {
+				Object v = var3.next();
+				Field field = ReflectionUtils.findField(v.getClass(), property);
+				if (null == field) {
+					throw new RuntimeException(v.getClass() + "不存在属性" + property);
+				}
 
-                ReflectionUtils.makeAccessible(field);
-                T fieldValue = (T) ReflectionUtils.getField(field, v);
-                set.add(fieldValue);
-            }
+				ReflectionUtils.makeAccessible(field);
+				T fieldValue = (T) ReflectionUtils.getField(field, v);
+				set.add(fieldValue);
+			}
 
-            return set;
-        }
-    }
+			return set;
+		}
+	}
 
-    public static <V> List<V> listProperty(List<?> list, String property) {
-        if (list == null) {
-            return Collections.emptyList();
-        } else {
-            List<V> result = new ArrayList();
-            Iterator var3 = list.iterator();
+	public static <V> List<V> listProperty(List<?> list, String property) {
+		if (list == null) {
+			return Collections.emptyList();
+		}
+		else {
+			List<V> result = new ArrayList();
+			Iterator var3 = list.iterator();
 
-            while(var3.hasNext()) {
-                Object v = var3.next();
-                Field field = ReflectionUtils.findField(v.getClass(), property);
-                if (null == field) {
-                    throw new RuntimeException(v.getClass() + "不存在属性" + property);
-                }
+			while (var3.hasNext()) {
+				Object v = var3.next();
+				Field field = ReflectionUtils.findField(v.getClass(), property);
+				if (null == field) {
+					throw new RuntimeException(v.getClass() + "不存在属性" + property);
+				}
 
-                ReflectionUtils.makeAccessible(field);
-                V fieldValue = (V) ReflectionUtils.getField(field, v);
-                result.add(fieldValue);
-            }
+				ReflectionUtils.makeAccessible(field);
+				V fieldValue = (V) ReflectionUtils.getField(field, v);
+				result.add(fieldValue);
+			}
 
-            return result;
-        }
-    }
+			return result;
+		}
+	}
 
-    public <T> Page<T> request2Page(InputPageDto requestDto) {
-        return requestDto == null ? new Page() : new Page(requestDto.getPageNum(), requestDto.getPageSize());
-    }
+	public <T> Page<T> request2Page(InputPageDto requestDto) {
+		return requestDto == null ? new Page()
+				: new Page(requestDto.getPageNum(), requestDto.getPageSize());
+	}
 
-    public <K> PageResultDto<K> response2Page(Pagination page, List<K> list, InputPageDto request) {
-        PageDto<K> rpage = new PageDto();
-        rpage.setList(list);
-        rpage.setPageCount(page == null ? 0L : page.getPages());
-        rpage.setPageSize(page == null ? request.getPageSize() : page.getSize());
-        rpage.setTotal(page == null ? 0L : page.getTotal());
-        rpage.setPageNum(page == null ? request.getPageNum() : page.getCurrent());
-        return PageResultDto.success(rpage);
-    }
+	public <K> PageResultDto<K> response2Page(Pagination page, List<K> list,
+			InputPageDto request) {
+		PageDto<K> rpage = new PageDto();
+		rpage.setList(list);
+		rpage.setPageCount(page == null ? 0L : page.getPages());
+		rpage.setPageSize(page == null ? request.getPageSize() : page.getSize());
+		rpage.setTotal(page == null ? 0L : page.getTotal());
+		rpage.setPageNum(page == null ? request.getPageNum() : page.getCurrent());
+		return PageResultDto.success(rpage);
+	}
+
 }

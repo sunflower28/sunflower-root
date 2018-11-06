@@ -12,38 +12,45 @@ import java.net.URL;
  * @author sunflower
  */
 public class HttpTools {
-    private static final Logger logger = LoggerFactory.getLogger(HttpTools.class);
 
-    public HttpTools() {
-    }
+	private static final Logger logger = LoggerFactory.getLogger(HttpTools.class);
 
-    public static String send(String url, String jsonStr) {
-        logger.debug(jsonStr);
-        String result = "";
+	public HttpTools() {
+	}
 
-        try {
-            URL realUrl = new URL(url);
-            HttpURLConnection connection = (HttpURLConnection)realUrl.openConnection();
-            connection.setRequestProperty("accept", "*/*");
-            connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
-            connection.setRequestProperty("connection", "Keep-Alive");
-            connection.setRequestProperty("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
-            connection.setRequestMethod("POST");
-            connection.setDoOutput(true);
-            byte[] bypes = jsonStr.getBytes("UTF-8");
-            connection.getOutputStream().write(bypes);
-            InputStreamReader isr = new InputStreamReader(connection.getInputStream(), "UTF-8");
-            BufferedReader buffRead = new BufferedReader(isr);
+	public static String send(String url, String jsonStr) {
+		logger.debug(jsonStr);
+		String result = "";
 
-            for(String line = ""; (line = buffRead.readLine()) != null; result = result + line) {
-                ;
-            }
+		try {
+			URL realUrl = new URL(url);
+			HttpURLConnection connection = (HttpURLConnection) realUrl.openConnection();
+			connection.setRequestProperty("accept", "*/*");
+			connection.setRequestProperty("Content-Type",
+					"application/json; charset=UTF-8");
+			connection.setRequestProperty("connection", "Keep-Alive");
+			connection.setRequestProperty("user-agent",
+					"Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
+			connection.setRequestMethod("POST");
+			connection.setDoOutput(true);
+			byte[] bypes = jsonStr.getBytes("UTF-8");
+			connection.getOutputStream().write(bypes);
+			InputStreamReader isr = new InputStreamReader(connection.getInputStream(),
+					"UTF-8");
+			BufferedReader buffRead = new BufferedReader(isr);
 
-            buffRead.close();
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-        }
+			for (String line = ""; (line = buffRead.readLine()) != null; result = result
+					+ line) {
+				;
+			}
 
-        return result;
-    }
+			buffRead.close();
+		}
+		catch (Exception e) {
+			logger.error(e.getMessage(), e);
+		}
+
+		return result;
+	}
+
 }

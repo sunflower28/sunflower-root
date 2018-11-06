@@ -5,7 +5,8 @@ package com.sunflower.framework.constants;
  */
 public interface IEnum {
 
-    String code();
+	String code();
 
-    String message();
+	String message();
+
 }

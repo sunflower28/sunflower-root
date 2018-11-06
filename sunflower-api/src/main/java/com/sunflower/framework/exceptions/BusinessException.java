@@ -7,64 +7,66 @@ import com.sunflower.framework.constants.IEnum;
  */
 public class BusinessException extends RuntimeException {
 
-    static final long serialVersionUID = 1L;
-    private String code;
+	static final long serialVersionUID = 1L;
 
-    private String type;
+	private String code;
 
-    private Object data;
+	private String type;
 
-    public BusinessException() {
-    }
+	private Object data;
 
-    public BusinessException(String code, String message) {
-        super(message);
-        this.code = code;
-    }
+	public BusinessException() {
+	}
 
-    public BusinessException(String code, String message, Throwable cause) {
-        super(message, cause);
-        this.code = code;
-    }
+	public BusinessException(String code, String message) {
+		super(message);
+		this.code = code;
+	}
 
-    public BusinessException(IEnum ienum) {
-        super(ienum.message());
-        this.code = ienum.code();
-    }
+	public BusinessException(String code, String message, Throwable cause) {
+		super(message, cause);
+		this.code = code;
+	}
 
-    public BusinessException(String message) {
-        super(message);
-    }
+	public BusinessException(IEnum ienum) {
+		super(ienum.message());
+		this.code = ienum.code();
+	}
 
-    public BusinessException(String message, Throwable cause) {
-        super(message, cause);
-    }
+	public BusinessException(String message) {
+		super(message);
+	}
 
-    public BusinessException(Throwable cause) {
-        super(cause);
-    }
+	public BusinessException(String message, Throwable cause) {
+		super(message, cause);
+	}
 
-    public String getCode() {
-        return this.code;
-    }
+	public BusinessException(Throwable cause) {
+		super(cause);
+	}
 
-    public void setCode(String code) {
-        this.code = code;
-    }
+	public String getCode() {
+		return this.code;
+	}
 
-    public String getType() {
-        return this.type;
-    }
+	public void setCode(String code) {
+		this.code = code;
+	}
 
-    public void setType(String type) {
-        this.type = type;
-    }
+	public String getType() {
+		return this.type;
+	}
 
-    public Object getData() {
-        return this.data;
-    }
+	public void setType(String type) {
+		this.type = type;
+	}
 
-    public void setData(Object data) {
-        this.data = data;
-    }
+	public Object getData() {
+		return this.data;
+	}
+
+	public void setData(Object data) {
+		this.data = data;
+	}
+
 }

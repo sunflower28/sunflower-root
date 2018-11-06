@@ -3,20 +3,22 @@ package com.sunflower.framework.util;
 import javax.servlet.http.Cookie;
 
 public class SunflowerCookieUtil {
-    private static final ThreadLocal<Cookie[]> cookieThreadLocal = new ThreadLocal();
 
-    public SunflowerCookieUtil() {
-    }
+	private static final ThreadLocal<Cookie[]> cookieThreadLocal = new ThreadLocal();
 
-    public static void set(Cookie[] cookies) {
-        cookieThreadLocal.set(cookies);
-    }
+	public SunflowerCookieUtil() {
+	}
 
-    public static void remove() {
-        cookieThreadLocal.remove();
-    }
+	public static void set(Cookie[] cookies) {
+		cookieThreadLocal.set(cookies);
+	}
 
-    public static Cookie[] get() {
-        return (Cookie[])cookieThreadLocal.get();
-    }
+	public static void remove() {
+		cookieThreadLocal.remove();
+	}
+
+	public static Cookie[] get() {
+		return (Cookie[]) cookieThreadLocal.get();
+	}
+
 }
