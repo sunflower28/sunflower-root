@@ -26,8 +26,7 @@ public class TokenUtil {
 		return key;
 	}
 
-	public static String createJWT(String id, String subject, long ttlMillis)
-			throws Exception {
+	public static String createJWT(String id, String subject, long ttlMillis) {
 		Assert.isTrue(ttlMillis >= 10000L, "token 最小有效期为10秒");
 		SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
 		SecretKey key = generalKey("kkweos09dd23njslpe");

@@ -9,7 +9,7 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>sunflower-stateless</artifactId>
+    <artifactId>sunflower-web</artifactId>
     <dependencies>
         <dependency>
             <groupId>javax.servlet</groupId>

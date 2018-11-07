@@ -23,10 +23,12 @@ public class MemberUserProfile implements UserProfile {
 		this.accountType = accountType;
 	}
 
+	@Override
 	public String getLoginId() {
 		return this.loginId;
 	}
 
+	@Override
 	public String getName() {
 		return this.name;
 	}
