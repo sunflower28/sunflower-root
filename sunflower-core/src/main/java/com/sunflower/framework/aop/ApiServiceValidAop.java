@@ -63,11 +63,8 @@ public class ApiServiceValidAop {
 
 		// 验证入参
 		Object[] args = pjp.getArgs();
-		Iterator<Integer> iterator = hasValidParamIndexList.iterator();
-
-		while (iterator.hasNext()) {
-			Integer argIndex = iterator.next();
-			Object arg = args[argIndex.intValue()];
+		for (Integer argIndex : hasValidParamIndexList) {
+			Object arg = args[argIndex];
 
 			/////////////////////// 验证基本数据类型开始//////////////////
 			if (isEmpty(arg)) {
@@ -79,10 +76,9 @@ public class ApiServiceValidAop {
 				if (constraintViolations.isEmpty()) {
 					Map<String, String> errorMessage = new HashMap<>(
 							constraintViolations.size());
-					constraintViolations.forEach(validation -> {
-						errorMessage.put(validation.getPropertyPath().toString(),
-								validation.getMessage());
-					});
+					constraintViolations.forEach(validation -> errorMessage.put(
+							validation.getPropertyPath().toString(),
+							validation.getMessage()));
 					errorMessages.put(argIndex, errorMessage);
 				}
 			}
