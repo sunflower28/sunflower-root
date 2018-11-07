@@ -1,4 +1,27 @@
 package com.sunflower.framework.spring;
 
-public class MyWebAppConfigurer {
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import java.util.List;
+
+/**
+ * @author sunflower
+ */
+public class MyWebAppConfigurer implements WebMvcConfigurer {
+
+    public MyWebAppConfigurer() {
+    }
+
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**");
+    }
+
+    @Override
+    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
+        argumentResolvers.add(new UserProfileArgumentResolver());
+    }
+
 }

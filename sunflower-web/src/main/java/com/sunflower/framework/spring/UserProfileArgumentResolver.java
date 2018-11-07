@@ -18,10 +18,14 @@ import java.lang.reflect.Method;
 
 /**
  * @author sunflower
+ * 自定义参数解析--token--用于登陆--前后端交互
  */
 public class UserProfileArgumentResolver implements HandlerMethodArgumentResolver {
 
     public static final Logger logger = LoggerFactory.getLogger(UserProfileArgumentResolver.class);
+
+    public UserProfileArgumentResolver() {
+    }
 
     @Override
     public boolean supportsParameter(MethodParameter methodParameter) {
