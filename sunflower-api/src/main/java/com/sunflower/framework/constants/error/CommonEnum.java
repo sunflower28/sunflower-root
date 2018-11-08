@@ -72,12 +72,12 @@ public enum CommonEnum implements IEnum {
 
 	@Override
 	public String code() {
-		return null;
+		return this.code;
 	}
 
 	@Override
 	public String message() {
-		return null;
+		return this.message;
 	}
 
 }

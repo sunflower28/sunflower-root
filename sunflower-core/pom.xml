@@ -111,10 +111,6 @@
 					<groupId>xmlpull</groupId>
 					<artifactId>xmlpull</artifactId>
 				</exclusion>
-				<exclusion>
-					<artifactId>commons-lang</artifactId>
-					<groupId>commons-lang</groupId>
-				</exclusion>
 			</exclusions>
 		</dependency>
 		<!--<dependency>
