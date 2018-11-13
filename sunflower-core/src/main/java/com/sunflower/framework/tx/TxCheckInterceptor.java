@@ -23,6 +23,7 @@ public class TxCheckInterceptor implements MethodInterceptor {
 	public TxCheckInterceptor() {
 	}
 
+	@Override
 	public Object invoke(MethodInvocation invocation) throws Throwable {
 		Set<SqlCommandType> set = TxServiceHelper.get();
 		TxServiceHelper.removeAll();

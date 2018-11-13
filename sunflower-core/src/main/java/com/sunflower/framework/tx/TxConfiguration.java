@@ -23,7 +23,7 @@ public class TxConfiguration {
 	public TxConfiguration() {
 	}
 
-	@Bean
+	@Bean({"myTransactionInterceptor"})
 	public TransactionInterceptor txAdvice() {
 		RuleBasedTransactionAttribute readOnlyTx = new RuleBasedTransactionAttribute();
 		readOnlyTx.setReadOnly(true);
@@ -43,33 +43,32 @@ public class TxConfiguration {
 		transactionAttributeSource.addTransactionalMethod("bind*", requiredTx);
 		transactionAttributeSource.addTransactionalMethod("lock*", requiredTx);
 		transactionAttributeSource.addTransactionalMethod("*", readOnlyTx);
-		return new TransactionInterceptor(this.transactionManager,
-				transactionAttributeSource);
+		return new TransactionInterceptor(this.transactionManager, transactionAttributeSource);
 	}
 
 	@Bean
-	public AspectJExpressionPointcutAdvisor txAdvisor() {
+	public AspectJExpressionPointcutAdvisor txAdvisor(TransactionInterceptor myTransactionInterceptor) {
 		AspectJExpressionPointcutAdvisor pointcutAdvisor = new AspectJExpressionPointcutAdvisor();
 		pointcutAdvisor.setExpression(
 				"(execution(public * com.sunflower.*.svcimpl.*Impl.*(..)))or(execution(public * com.sunflower.*.service.impl.*Impl.*(..)))");
-		pointcutAdvisor.setAdvice(this.txAdvice());
+		pointcutAdvisor.setAdvice(myTransactionInterceptor);
 		pointcutAdvisor.setOrder(2);
 		return pointcutAdvisor;
 	}
 
 	@Bean
-	public TxCheckInterceptor txCheckInterceptor() {
+	public TxCheckInterceptor txCheckInterceptor(TransactionInterceptor myTransactionInterceptor) {
 		TxCheckInterceptor txCheckInterceptor = new TxCheckInterceptor();
-		txCheckInterceptor.setTransactionInterceptor(this.txAdvice());
+		txCheckInterceptor.setTransactionInterceptor(myTransactionInterceptor);
 		return txCheckInterceptor;
 	}
 
 	@Bean
-	public AspectJExpressionPointcutAdvisor txCheckInterceptorAdvisor() {
+	public AspectJExpressionPointcutAdvisor txCheckInterceptorAdvisor(TxCheckInterceptor txCheckInterceptor) {
 		AspectJExpressionPointcutAdvisor pointcutAdvisor = new AspectJExpressionPointcutAdvisor();
 		pointcutAdvisor.setExpression(
 				"(execution(public * com.sunflower.*.svcimpl.*Impl.*(..)))or(execution(public * com.sunflower.*.service.impl.*Impl.*(..)))");
-		pointcutAdvisor.setAdvice(this.txCheckInterceptor());
+		pointcutAdvisor.setAdvice(txCheckInterceptor);
 		pointcutAdvisor.setOrder(1);
 		return pointcutAdvisor;
 	}
