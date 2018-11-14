@@ -11,34 +11,34 @@ import java.util.Set;
  */
 public class TxServiceHelper {
 
-	private static ThreadLocal<Set<SqlCommandType>> transactionAttribute = new ThreadLocal();
+	private static ThreadLocal<Set<SqlCommandType>> transactionAttribute = new ThreadLocal<>();
 
 	public TxServiceHelper() {
 	}
 
 	public static void add(SqlCommandType type) {
-		Set list = transactionAttribute.get();
-		if (list == null) {
-			list = new HashSet();
-			transactionAttribute.set(list);
+		Set<SqlCommandType> set = transactionAttribute.get();
+		if (set == null) {
+			set = new HashSet<>();
+			transactionAttribute.set(set);
 		}
 
-		list.add(type);
+		set.add(type);
 	}
 
 	public static void addAll(Set<SqlCommandType> sets) {
-		Set<SqlCommandType> list = transactionAttribute.get();
-		if (list == null) {
-			list = new HashSet();
-			transactionAttribute.set(list);
+		Set<SqlCommandType> set = transactionAttribute.get();
+		if (set == null) {
+			set = new HashSet<>();
+			transactionAttribute.set(set);
 		}
 
-		list.addAll(sets);
+		set.addAll(sets);
 	}
 
 	public static Set<SqlCommandType> get() {
-		Set list = transactionAttribute.get();
-		return list == null ? Collections.emptySet() : list;
+		Set set = transactionAttribute.get();
+		return set == null ? Collections.emptySet() : set;
 	}
 
 	public static void removeAll() {
