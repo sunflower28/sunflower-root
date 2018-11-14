@@ -12,6 +12,9 @@ import org.springframework.transaction.interceptor.TransactionInterceptor;
 
 import java.util.Collections;
 
+/**
+ * @author sunflower
+ */
 @Configuration
 public class TxConfiguration {
 
@@ -49,8 +52,7 @@ public class TxConfiguration {
 	@Bean
 	public AspectJExpressionPointcutAdvisor txAdvisor(TransactionInterceptor myTransactionInterceptor) {
 		AspectJExpressionPointcutAdvisor pointcutAdvisor = new AspectJExpressionPointcutAdvisor();
-		pointcutAdvisor.setExpression(
-				"(execution(public * com.sunflower.*.svcimpl.*Impl.*(..)))or(execution(public * com.sunflower.*.service.impl.*Impl.*(..)))");
+		pointcutAdvisor.setExpression(AOP_POINTCUT_EXPRESSION);
 		pointcutAdvisor.setAdvice(myTransactionInterceptor);
 		pointcutAdvisor.setOrder(2);
 		return pointcutAdvisor;
@@ -66,8 +68,7 @@ public class TxConfiguration {
 	@Bean
 	public AspectJExpressionPointcutAdvisor txCheckInterceptorAdvisor(TxCheckInterceptor txCheckInterceptor) {
 		AspectJExpressionPointcutAdvisor pointcutAdvisor = new AspectJExpressionPointcutAdvisor();
-		pointcutAdvisor.setExpression(
-				"(execution(public * com.sunflower.*.svcimpl.*Impl.*(..)))or(execution(public * com.sunflower.*.service.impl.*Impl.*(..)))");
+		pointcutAdvisor.setExpression(AOP_POINTCUT_EXPRESSION);
 		pointcutAdvisor.setAdvice(txCheckInterceptor);
 		pointcutAdvisor.setOrder(1);
 		return pointcutAdvisor;
