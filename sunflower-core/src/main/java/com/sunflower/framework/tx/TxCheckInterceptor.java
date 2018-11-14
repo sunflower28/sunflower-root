@@ -28,7 +28,7 @@ public class TxCheckInterceptor implements MethodInterceptor {
 		Set<SqlCommandType> set = TxServiceHelper.get();
 		TxServiceHelper.removeAll();
 
-		Object var11;
+		Object object;
 		try {
 			Object proceed = invocation.proceed();
 			Method method = invocation.getMethod();
@@ -57,7 +57,7 @@ public class TxCheckInterceptor implements MethodInterceptor {
 				}
 			}
 
-			var11 = proceed;
+			object = proceed;
 		}
 		finally {
 			TxServiceHelper.removeAll();
@@ -67,7 +67,7 @@ public class TxCheckInterceptor implements MethodInterceptor {
 
 		}
 
-		return var11;
+		return object;
 	}
 
 	public void setTransactionInterceptor(TransactionInterceptor transactionInterceptor) {
