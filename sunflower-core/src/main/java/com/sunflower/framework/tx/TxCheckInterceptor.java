@@ -50,9 +50,10 @@ public class TxCheckInterceptor implements MethodInterceptor {
 					else {
 						Set<SqlCommandType> list = TxServiceHelper.get();
 
-                        boolean flag = attr.isReadOnly() && (list.contains(SqlCommandType.DELETE)
-                                        || list.contains(SqlCommandType.INSERT)
-                                        || list.contains(SqlCommandType.UPDATE));
+						boolean flag = attr.isReadOnly()
+								&& (list.contains(SqlCommandType.DELETE)
+										|| list.contains(SqlCommandType.INSERT)
+										|| list.contains(SqlCommandType.UPDATE));
 
 						if (flag) {
 							logger.error("您的方法标志为只读,但执行了增删改操作,请修改方法的名称定义:"

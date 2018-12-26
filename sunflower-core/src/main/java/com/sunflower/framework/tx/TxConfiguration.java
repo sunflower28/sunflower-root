@@ -26,7 +26,7 @@ public class TxConfiguration {
 	public TxConfiguration() {
 	}
 
-	@Bean({"myTransactionInterceptor"})
+	@Bean({ "myTransactionInterceptor" })
 	public TransactionInterceptor txAdvice() {
 		RuleBasedTransactionAttribute readOnlyTx = new RuleBasedTransactionAttribute();
 		readOnlyTx.setReadOnly(true);
@@ -46,11 +46,13 @@ public class TxConfiguration {
 		transactionAttributeSource.addTransactionalMethod("bind*", requiredTx);
 		transactionAttributeSource.addTransactionalMethod("lock*", requiredTx);
 		transactionAttributeSource.addTransactionalMethod("*", readOnlyTx);
-		return new TransactionInterceptor(this.transactionManager, transactionAttributeSource);
+		return new TransactionInterceptor(this.transactionManager,
+				transactionAttributeSource);
 	}
 
 	@Bean
-	public AspectJExpressionPointcutAdvisor txAdvisor(TransactionInterceptor myTransactionInterceptor) {
+	public AspectJExpressionPointcutAdvisor txAdvisor(
+			TransactionInterceptor myTransactionInterceptor) {
 		AspectJExpressionPointcutAdvisor pointcutAdvisor = new AspectJExpressionPointcutAdvisor();
 		pointcutAdvisor.setExpression(AOP_POINTCUT_EXPRESSION);
 		pointcutAdvisor.setAdvice(myTransactionInterceptor);
@@ -59,14 +61,16 @@ public class TxConfiguration {
 	}
 
 	@Bean
-	public TxCheckInterceptor txCheckInterceptor(TransactionInterceptor myTransactionInterceptor) {
+	public TxCheckInterceptor txCheckInterceptor(
+			TransactionInterceptor myTransactionInterceptor) {
 		TxCheckInterceptor txCheckInterceptor = new TxCheckInterceptor();
 		txCheckInterceptor.setTransactionInterceptor(myTransactionInterceptor);
 		return txCheckInterceptor;
 	}
 
 	@Bean
-	public AspectJExpressionPointcutAdvisor txCheckInterceptorAdvisor(TxCheckInterceptor txCheckInterceptor) {
+	public AspectJExpressionPointcutAdvisor txCheckInterceptorAdvisor(
+			TxCheckInterceptor txCheckInterceptor) {
 		AspectJExpressionPointcutAdvisor pointcutAdvisor = new AspectJExpressionPointcutAdvisor();
 		pointcutAdvisor.setExpression(AOP_POINTCUT_EXPRESSION);
 		pointcutAdvisor.setAdvice(txCheckInterceptor);

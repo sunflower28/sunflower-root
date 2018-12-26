@@ -14,10 +14,12 @@
     <packaging>pom</packaging>
     <modules>
         <module>sunflower-core</module>
+        <module>sunflower-druid</module>
         <module>sunflower-api</module>
-		<module>osp-core</module>
+		<module>admin-core</module>
         <module>sunflower-web</module>
         <module>sunflower-jxls-core</module>
+        <module>sunflower-http-core</module>
     </modules>
 
 

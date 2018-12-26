@@ -16,8 +16,11 @@ import org.springframework.context.annotation.Primary;
 import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
+/**
+ * @author hankui
+ */
 @Configuration
 @ConfigurationProperties(prefix = "spring.datasource-druid")
 @ConditionalOnClass({ DruidDataSource.class })
@@ -72,7 +75,7 @@ public class DruidConfiguration {
 
 	@Bean(destroyMethod = "close")
 	@Primary
-	public DataSource dataSource() {
+	public DataSource myDruidDataSource() {
 		DruidDataSource datasource = new DruidDataSource();
 		datasource.setUrl(this.url);
 		datasource.setUsername(this.username);
@@ -91,7 +94,7 @@ public class DruidConfiguration {
 		datasource.setMaxPoolPreparedStatementPerConnectionSize(
 				this.maxPoolPreparedStatementPerConnectionSize);
 		// datasource.setPasswordCallback(new DruidPassworkCallbackBrc());
-		Collection<String> connectionInitSqls = new ArrayList();
+		List<String> connectionInitSqls = new ArrayList<>();
 		connectionInitSqls.add("set names utf8mb4");
 		datasource.setConnectionInitSqls(connectionInitSqls);
 
@@ -312,6 +315,7 @@ public class DruidConfiguration {
 		this.statViewServletResetEnable = statViewServletResetEnable;
 	}
 
+	@Override
 	public boolean equals(Object o) {
 		if (o == this) {
 			return true;
@@ -510,6 +514,7 @@ public class DruidConfiguration {
 		return other instanceof DruidConfiguration;
 	}
 
+	@Override
 	public int hashCode() {
 		int result = 1;
 		Object $url = this.getUrl();
@@ -557,6 +562,7 @@ public class DruidConfiguration {
 		return result;
 	}
 
+	@Override
 	public String toString() {
 		return "DruidConfiguration(url=" + this.getUrl() + ", username="
 				+ this.getUsername() + ", driverClassName=" + this.getDriverClassName()
