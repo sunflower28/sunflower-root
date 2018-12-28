@@ -1,6 +1,6 @@
 package com.sunflower.member;
 
-import com.sunflower.framework.token.UserProfile;
+import com.sunflower.token.UserProfile;
 import springfox.documentation.annotations.ApiIgnore;
 
 @ApiIgnore
