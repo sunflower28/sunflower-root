@@ -16,7 +16,7 @@ public class SunflowerTokenUtil {
 	}
 
 	public static String get() {
-		return (String) tokenThreadLocal.get();
+		return tokenThreadLocal.get();
 	}
 
 }

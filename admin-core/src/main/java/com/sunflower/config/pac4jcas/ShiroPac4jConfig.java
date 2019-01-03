@@ -135,7 +135,7 @@ public class ShiroPac4jConfig extends AbstractShiroWebFilterConfiguration {
 		parameterClient.setSupportGetRequest(true);
 		parameterClient.setName("jwt");
 		clients.setClients(
-				new Client[] { casClient, casRestFormClient, parameterClient });
+				casClient, casRestFormClient, parameterClient);
 		return clients;
 	}
 
@@ -167,7 +167,7 @@ public class ShiroPac4jConfig extends AbstractShiroWebFilterConfiguration {
 				casProperties.getCasServerUrlPrefix() + "/sunflower-cas/");
 		singleSignOutFilter.setIgnoreInitConfiguration(true);
 		bean.setFilter(singleSignOutFilter);
-		bean.addUrlPatterns(new String[] { "/*" });
+		bean.addUrlPatterns("/*");
 		return bean;
 	}
 
@@ -232,7 +232,7 @@ public class ShiroPac4jConfig extends AbstractShiroWebFilterConfiguration {
 				"shiroFilterFactoryBean");
 		delegateFilter.setTargetFilterLifecycle(true);
 		filterRegistrationBean.setFilter(delegateFilter);
-		filterRegistrationBean.addUrlPatterns(new String[] { "/*" });
+		filterRegistrationBean.addUrlPatterns("/*");
 		return filterRegistrationBean;
 	}
 

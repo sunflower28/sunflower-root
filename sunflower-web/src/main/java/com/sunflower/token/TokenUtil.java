@@ -37,9 +37,9 @@ public class TokenUtil {
 		return builder.compact();
 	}
 
-	public static Claims parseJWT(String jwt) throws Exception {
+	public static Claims parseJWT(String jwt) {
 		SecretKey key = generalKey("kkweos09dd23njslpe");
-		Claims claims = (Claims) Jwts.parser().setSigningKey(key).parseClaimsJws(jwt)
+		Claims claims = Jwts.parser().setSigningKey(key).parseClaimsJws(jwt)
 				.getBody();
 		return claims;
 	}

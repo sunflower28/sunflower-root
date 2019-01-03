@@ -7,6 +7,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 
 /**
  * @author sunflower
@@ -33,16 +34,15 @@ public class HttpTools {
 					"Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
 			connection.setRequestMethod("POST");
 			connection.setDoOutput(true);
-			byte[] bypes = jsonStr.getBytes("UTF-8");
+			byte[] bypes = jsonStr.getBytes(StandardCharsets.UTF_8);
 			connection.getOutputStream().write(bypes);
 			InputStreamReader isr = new InputStreamReader(connection.getInputStream(),
-					"UTF-8");
+                    StandardCharsets.UTF_8);
 			BufferedReader buffRead = new BufferedReader(isr);
 
 			for (String line = ""; (line = buffRead.readLine()) != null; result = result
 					+ line) {
-				;
-			}
+            }
 
 			buffRead.close();
 		}

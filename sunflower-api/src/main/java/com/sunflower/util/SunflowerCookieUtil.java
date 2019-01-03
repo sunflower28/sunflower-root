@@ -18,7 +18,7 @@ public class SunflowerCookieUtil {
 	}
 
 	public static Cookie[] get() {
-		return (Cookie[]) cookieThreadLocal.get();
+		return cookieThreadLocal.get();
 	}
 
 }

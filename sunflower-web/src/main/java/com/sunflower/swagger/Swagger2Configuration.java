@@ -36,7 +36,7 @@ public class Swagger2Configuration {
 		return (new Docket(DocumentationType.SWAGGER_2)).select()
 				.apis(RequestHandlerSelectors.any()).paths(PathSelectors.any()).build()
 				.globalOperationParameters(operationParameters)
-				.ignoredParameterTypes(new Class[] { MemberUserProfile.class })
+				.ignoredParameterTypes(MemberUserProfile.class)
 				.directModelSubstitute(LocalDate.class, Date.class)
 				.directModelSubstitute(LocalDateTime.class, java.util.Date.class);
 	}

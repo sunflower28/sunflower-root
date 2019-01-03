@@ -72,7 +72,7 @@ public class ApiServiceValidAop {
 			}
 			else if (InputDto.class.isAssignableFrom(arg.getClass())) {
 				Set<ConstraintViolation<Object>> constraintViolations = this.validator
-						.validate(arg, new Class[0]);
+						.validate(arg);
 				if (!constraintViolations.isEmpty()) {
 					Map<String, String> errorMessage = new HashMap<>(
 							constraintViolations.size());
@@ -110,7 +110,7 @@ public class ApiServiceValidAop {
 			return Array.getLength(obj) == 0;
 		}
 		else {
-			return obj instanceof Map ? ((Map) obj).isEmpty() : false;
+			return obj instanceof Map && ((Map) obj).isEmpty();
 		}
 	}
 

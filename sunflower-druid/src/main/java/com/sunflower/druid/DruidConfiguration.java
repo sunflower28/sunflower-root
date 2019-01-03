@@ -113,7 +113,7 @@ public class DruidConfiguration {
 	public ServletRegistrationBean<StatViewServlet> druidServlet() {
 		logger.debug("init Druid Servlet Configuration ");
 		ServletRegistrationBean<StatViewServlet> servletRegistrationBean = new ServletRegistrationBean(
-				new StatViewServlet(), new String[] { this.statViewServletMapping });
+				new StatViewServlet(), this.statViewServletMapping);
 		servletRegistrationBean.addInitParameter("loginUsername",
 				this.statViewServletLoginUsername);
 		servletRegistrationBean.addInitParameter("loginPassword",
@@ -128,8 +128,8 @@ public class DruidConfiguration {
 		WebStatFilter webStatFilter = new WebStatFilter();
 		webStatFilter.setSessionStatEnable(false);
 		FilterRegistrationBean<WebStatFilter> filterRegistrationBean = new FilterRegistrationBean(
-				webStatFilter, new ServletRegistrationBean[0]);
-		filterRegistrationBean.addUrlPatterns(new String[] { "/*" });
+				webStatFilter);
+		filterRegistrationBean.addUrlPatterns("/*");
 		filterRegistrationBean.addInitParameter("exclusions",
 				this.webStatFilterExclusions);
 		return filterRegistrationBean;
@@ -495,16 +495,11 @@ public class DruidConfiguration {
 					Object other$statViewServletResetEnable = other
 							.getStatViewServletResetEnable();
 					if (this$statViewServletResetEnable == null) {
-						if (other$statViewServletResetEnable != null) {
-							return false;
-						}
+						return other$statViewServletResetEnable == null;
 					}
-					else if (!this$statViewServletResetEnable
-							.equals(other$statViewServletResetEnable)) {
-						return false;
-					}
+					else return this$statViewServletResetEnable
+							.equals(other$statViewServletResetEnable);
 
-					return true;
 				}
 			}
 		}
