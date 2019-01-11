@@ -497,8 +497,9 @@ public class DruidConfiguration {
 					if (this$statViewServletResetEnable == null) {
 						return other$statViewServletResetEnable == null;
 					}
-					else return this$statViewServletResetEnable
-							.equals(other$statViewServletResetEnable);
+					else
+						return this$statViewServletResetEnable
+								.equals(other$statViewServletResetEnable);
 
 				}
 			}

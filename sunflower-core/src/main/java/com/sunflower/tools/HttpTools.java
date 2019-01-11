@@ -37,12 +37,12 @@ public class HttpTools {
 			byte[] bypes = jsonStr.getBytes(StandardCharsets.UTF_8);
 			connection.getOutputStream().write(bypes);
 			InputStreamReader isr = new InputStreamReader(connection.getInputStream(),
-                    StandardCharsets.UTF_8);
+					StandardCharsets.UTF_8);
 			BufferedReader buffRead = new BufferedReader(isr);
 
 			for (String line = ""; (line = buffRead.readLine()) != null; result = result
 					+ line) {
-            }
+			}
 
 			buffRead.close();
 		}

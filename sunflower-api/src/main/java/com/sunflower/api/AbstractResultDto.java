@@ -65,11 +65,12 @@ public abstract class AbstractResultDto implements Serializable {
 				Object this$message = this.getMessage();
 				Object other$message = other.getMessage();
 				if (this$message == null) {
-                    return other$message == null;
+					return other$message == null;
 				}
-				else return this$message.equals(other$message);
+				else
+					return this$message.equals(other$message);
 
-            }
+			}
 		}
 	}
 

@@ -14,6 +14,8 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
+import javax.annotation.Nullable;
+import javax.validation.constraints.NotNull;
 import java.lang.reflect.Method;
 
 /**
@@ -25,18 +27,19 @@ public class UserProfileArgumentResolver implements HandlerMethodArgumentResolve
 			.getLogger(UserProfileArgumentResolver.class);
 
 	public UserProfileArgumentResolver() {
+		// fgfg
 	}
 
 	@Override
-	public boolean supportsParameter(MethodParameter methodParameter) {
+	public boolean supportsParameter(@Nullable MethodParameter methodParameter) {
 		return UserProfile.class.isAssignableFrom(methodParameter.getParameterType());
 	}
 
 	@Override
-	public Object resolveArgument(MethodParameter methodParameter,
+	public Object resolveArgument(@Nullable MethodParameter methodParameter,
 			ModelAndViewContainer modelAndViewContainer,
-			NativeWebRequest nativeWebRequest, WebDataBinderFactory webDataBinderFactory)
-			throws Exception {
+			@Nullable NativeWebRequest nativeWebRequest,
+			WebDataBinderFactory webDataBinderFactory) throws Exception {
 		String token = nativeWebRequest.getHeader("token");
 		if (token != null && !"".equals(token.trim()) && token.split("\\.").length == 3) {
 			Method method = methodParameter.getMethod();

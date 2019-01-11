@@ -33,4 +33,12 @@ public class MemberUserProfile implements UserProfile {
 		return this.name;
 	}
 
+	public String getAccountType() {
+		return accountType;
+	}
+
+	public void setAccountType(String accountType) {
+		this.accountType = accountType;
+	}
+
 }

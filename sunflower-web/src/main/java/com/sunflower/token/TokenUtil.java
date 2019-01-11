@@ -39,8 +39,7 @@ public class TokenUtil {
 
 	public static Claims parseJWT(String jwt) {
 		SecretKey key = generalKey("kkweos09dd23njslpe");
-		Claims claims = Jwts.parser().setSigningKey(key).parseClaimsJws(jwt)
-				.getBody();
+		Claims claims = Jwts.parser().setSigningKey(key).parseClaimsJws(jwt).getBody();
 		return claims;
 	}
 

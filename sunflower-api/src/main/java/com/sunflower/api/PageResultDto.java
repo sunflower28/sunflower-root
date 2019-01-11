@@ -76,11 +76,12 @@ public class PageResultDto<T> extends AbstractResultDto {
 				Object this$data = this.getData();
 				Object other$data = other.getData();
 				if (this$data == null) {
-                    return other$data == null;
+					return other$data == null;
 				}
-				else return this$data.equals(other$data);
+				else
+					return this$data.equals(other$data);
 
-            }
+			}
 		}
 	}
 

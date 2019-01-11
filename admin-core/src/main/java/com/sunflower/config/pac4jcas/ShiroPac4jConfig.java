@@ -134,8 +134,7 @@ public class ShiroPac4jConfig extends AbstractShiroWebFilterConfiguration {
 				this.jwtAuthenticator());
 		parameterClient.setSupportGetRequest(true);
 		parameterClient.setName("jwt");
-		clients.setClients(
-				casClient, casRestFormClient, parameterClient);
+		clients.setClients(casClient, casRestFormClient, parameterClient);
 		return clients;
 	}
 
@@ -265,7 +264,8 @@ public class ShiroPac4jConfig extends AbstractShiroWebFilterConfiguration {
 		logoutFilter.setCentralLogout(true);
 		logoutFilter.setLocalLogout(true);
 		logoutFilter.setDefaultUrl(
-				casProperties.getCasServerUrlPrefix() + "/sunflower-cas/logout?service=" + casProperties.getCasServerUrlPrefix());
+				casProperties.getCasServerUrlPrefix() + "/sunflower-cas/logout?service="
+						+ casProperties.getCasServerUrlPrefix());
 		filters.put("logout", logoutFilter);
 		CallbackFilter callbackFilter = new CallbackFilter();
 		callbackFilter.setConfig(config);

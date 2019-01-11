@@ -64,11 +64,12 @@ public class InputDto implements Serializable {
 				Object this$operator = this.getOperator();
 				Object other$operator = other.getOperator();
 				if (this$operator == null) {
-                    return other$operator == null;
+					return other$operator == null;
 				}
-				else return this$operator.equals(other$operator);
+				else
+					return this$operator.equals(other$operator);
 
-            }
+			}
 		}
 	}
 
