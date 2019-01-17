@@ -1,11 +1,11 @@
 package com.sunflower.excel;
 
-import com.sunflower.excel.command.GridCommand;
 import com.sunflower.excel.command.ImageCommand;
 import com.sunflower.excel.command.KeepCommand;
 import com.sunflower.excel.command.MergeCommand;
 import org.jxls.area.Area;
 import org.jxls.builder.xls.XlsCommentAreaBuilder;
+import org.jxls.command.GridCommand;
 import org.jxls.common.CellRef;
 import org.jxls.common.Context;
 import org.jxls.expression.JexlExpressionEvaluator;
@@ -16,13 +16,11 @@ import org.jxls.transform.Transformer;
 import org.jxls.util.JxlsHelper;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -87,12 +85,7 @@ public abstract class JxlsBuilder {
 			throw new IllegalArgumentException("不支持非excel文件：" + inFile.getName());
 		}
 		this.inFile = inFile;
-		try {
-			in = new FileInputStream(inFile);
-		}
-		catch (FileNotFoundException e) {
-			throw new IllegalArgumentException("文件读取失败：" + inFile.getAbsolutePath(), e);
-		}
+
 	}
 
 	/**
@@ -100,7 +93,7 @@ public abstract class JxlsBuilder {
 	 * @return
 	 */
 	public static JxlsBuilder getBuilder(InputStream in) {
-		return new JxlsBuilderImpl(in);
+		return new AbstractJxlsBuilderImpl(in);
 	}
 
 	/**
@@ -108,7 +101,7 @@ public abstract class JxlsBuilder {
 	 * @return
 	 */
 	public static JxlsBuilder getBuilder(File templateFile) {
-		return new JxlsBuilderImpl(templateFile);
+		return new AbstractJxlsBuilderImpl(templateFile);
 	}
 
 	/**
@@ -117,24 +110,24 @@ public abstract class JxlsBuilder {
 	 */
 	public static JxlsBuilder getBuilder(String filePath) {
 		// 判断是相对路径还是绝对路径
-		if (!JxlsUtil.me().isAbsolutePath(filePath)) {
+		if (JxlsUtil.me().isAbsolutePath(filePath)) {
 			if (JxlsConfig.getTemplateRoot().startsWith("classpath:")) {
 				// 文件在jar包内
 				String templateRoot = JxlsConfig.getTemplateRoot()
 						.replaceFirst("classpath:", "");
 				InputStream resourceAsStream = JxlsBuilder.class
 						.getResourceAsStream(templateRoot + "/" + filePath);
-				return new JxlsBuilderImpl(resourceAsStream);
+				return new AbstractJxlsBuilderImpl(resourceAsStream);
 			}
 			else {
 				// 相对路径就从模板目录获取文件
-				return new JxlsBuilderImpl(new File(
+				return new AbstractJxlsBuilderImpl(new File(
 						JxlsConfig.getTemplateRoot() + File.separator + filePath));
 			}
 		}
 		else {
 			// 绝对路径
-			return new JxlsBuilderImpl(new File(filePath));
+			return new AbstractJxlsBuilderImpl(new File(filePath));
 		}
 	}
 
@@ -168,10 +161,8 @@ public abstract class JxlsBuilder {
 	private void transform() throws Exception {
 		jxlsHelper.getAreaBuilder().setTransformer(transformer);
 		List<Area> xlsAreaList = jxlsHelper.getAreaBuilder().build();
-		Iterator var4 = xlsAreaList.iterator();
 
-		while (var4.hasNext()) {
-			Area xlsArea = (Area) var4.next();
+		for (Area xlsArea : xlsAreaList) {
 			xlsArea.applyAt(new CellRef(xlsArea.getStartCellRef().getCellName()),
 					context);
 			if (jxlsHelper.isProcessFormulas()) {
@@ -195,25 +186,13 @@ public abstract class JxlsBuilder {
 		transformer.write();
 	}
 
-	private static class JxlsBuilderImpl extends JxlsBuilder {
-
-		public JxlsBuilderImpl(InputStream in) {
-			super(in);
-		}
-
-		public JxlsBuilderImpl(File inFile) {
-			super(inFile);
-		}
-
-	}
-
-	public Transformer getTransformer() throws Exception {
+	public Transformer getTransformer() throws IOException {
 		if (transformer == null) {
 			if (out == null && outFile == null) {
-				throw new Exception("请指定文件输出位置");
+				throw new RuntimeException("请指定文件输出位置");
 			}
 			if (out == null) {
-				out = new FileOutputStream(outFile);
+				out = Files.newOutputStream(outFile.toPath());
 			}
 
 			transformer = jxlsHelper.createTransformer(in, out);
@@ -257,9 +236,8 @@ public abstract class JxlsBuilder {
 	 * @param value
 	 * @return
 	 */
-	public JxlsBuilder putVar(String name, Object value) {
+	public void putVar(String name, Object value) {
 		context.putVar(name, value);
-		return this;
 	}
 
 	/**
@@ -268,8 +246,8 @@ public abstract class JxlsBuilder {
 	 * @return
 	 */
 	public JxlsBuilder putAll(Map<String, Object> map) {
-		for (String key : map.keySet()) {
-			putVar(key, map.get(key));
+		for (Map.Entry<String, Object> entry : map.entrySet()) {
+			putVar(entry.getKey(), entry.getValue());
 		}
 		return this;
 	}
@@ -332,10 +310,6 @@ public abstract class JxlsBuilder {
 		return outFile;
 	}
 
-	public static void main(String[] args) throws Exception {
-		JxlsBuilder.getBuilder("xx.xlsx").out("D:/xx.xlsx").putVar("", null).build();
-	}
-
 	/**
 	 * 生成excel后删除指定表格
 	 * @param sheetNames
@@ -344,6 +318,18 @@ public abstract class JxlsBuilder {
 	public JxlsBuilder removeSheet(String... sheetNames) {
 		this.removeSheetNames = sheetNames;
 		return this;
+	}
+
+	private static class AbstractJxlsBuilderImpl extends JxlsBuilder {
+
+		public AbstractJxlsBuilderImpl(InputStream in) {
+			super(in);
+		}
+
+		public AbstractJxlsBuilderImpl(File inFile) {
+			super(inFile);
+		}
+
 	}
 
 }

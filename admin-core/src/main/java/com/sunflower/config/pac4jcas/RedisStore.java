@@ -22,8 +22,9 @@ public class RedisStore<K, V> extends AbstractStore<K, V> {
 		}
 	}
 
+	@SuppressWarnings({ "unchecked" })
 	private K getKey(K key) {
-		return (K) (this.keyPrefix.toString() + key.toString());
+		return (K) (String.valueOf(this.keyPrefix) + key);
 	}
 
 	@Override

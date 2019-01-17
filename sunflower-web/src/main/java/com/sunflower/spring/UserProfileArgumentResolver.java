@@ -15,7 +15,6 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
 import javax.annotation.Nullable;
-import javax.validation.constraints.NotNull;
 import java.lang.reflect.Method;
 
 /**
@@ -23,15 +22,18 @@ import java.lang.reflect.Method;
  */
 public class UserProfileArgumentResolver implements HandlerMethodArgumentResolver {
 
-	public static final Logger logger = LoggerFactory
+	private static final Logger logger = LoggerFactory
 			.getLogger(UserProfileArgumentResolver.class);
 
 	public UserProfileArgumentResolver() {
-		// fgfg
+		// userProfileArgumentResolver
 	}
 
 	@Override
 	public boolean supportsParameter(@Nullable MethodParameter methodParameter) {
+		if (methodParameter == null) {
+			return false;
+		}
 		return UserProfile.class.isAssignableFrom(methodParameter.getParameterType());
 	}
 
@@ -39,53 +41,41 @@ public class UserProfileArgumentResolver implements HandlerMethodArgumentResolve
 	public Object resolveArgument(@Nullable MethodParameter methodParameter,
 			ModelAndViewContainer modelAndViewContainer,
 			@Nullable NativeWebRequest nativeWebRequest,
-			WebDataBinderFactory webDataBinderFactory) throws Exception {
+			WebDataBinderFactory webDataBinderFactory) {
+		if (methodParameter == null || nativeWebRequest == null) {
+			throw new BusinessException("ERROR", "参数不合法");
+		}
+
 		String token = nativeWebRequest.getHeader("token");
-		if (token != null && !"".equals(token.trim()) && token.split("\\.").length == 3) {
-			Method method = methodParameter.getMethod();
-			if (method == null) {
+		boolean tokenIsTrue = token != null && !"".equals(token.trim())
+				&& token.split("\\.").length == 3;
+		if (!tokenIsTrue) {
+			logger.debug("请求头中未包含token");
+			throw new BusinessException(CommonEnum.LOGIN_TIMEOUT);
+		}
+
+		Method method = methodParameter.getMethod();
+		if (method == null) {
+			throw new BusinessException(CommonEnum.LOGIN_TIMEOUT);
+		}
+		try {
+			String subject = TokenUtil.parseJWT(token).getSubject();
+			ObjectMapper objectMapper = new ObjectMapper();
+			Object readValue = objectMapper.readValue(subject,
+					methodParameter.getParameterType());
+			if (null == readValue) {
 				throw new BusinessException(CommonEnum.LOGIN_TIMEOUT);
 			}
-			else {
-				try {
-					String subject = TokenUtil.parseJWT(token).getSubject();
-					ObjectMapper objectMapper = new ObjectMapper();
-					Object readValue = objectMapper.readValue(subject,
-							methodParameter.getParameterType());
-					if (null == readValue) {
-						throw new BusinessException(CommonEnum.LOGIN_TIMEOUT);
-					}
-					else {
-						SunflowerTokenUtil.set(token);
-						/*
-						 * if (readValue instanceof HouseHelperUserPrefile) {
-						 * HouseHelperUserPrefile userPrefile =
-						 * (HouseHelperUserPrefile)readValue; if
-						 * (AnnotationUtils.findAnnotation(method, RequiredLogin.class) !=
-						 * null && !StringUtils.hasText(userPrefile.getPhone())) { throw
-						 * new BusinessException(CommonEnum.OPTNEEDPHONE); }
-						 *
-						 * String redisOpenId = this.customRedis.get("token_" +
-						 * userPrefile.getLoginId()); if
-						 * (!userPrefile.getOpenId().equals(redisOpenId)) { throw new
-						 * BusinessException(CommonEnum.LOGIN_FORCEOUT); } }
-						 */
 
-						return readValue;
-					}
-				}
-				catch (Exception e) {
-					if (e instanceof BusinessException) {
-						throw e;
-					}
-					else {
-						throw new BusinessException(CommonEnum.LOGIN_TIMEOUT);
-					}
-				}
-			}
+			// 放入ThreadLocal存储
+			SunflowerTokenUtil.set(token);
+			return readValue;
+
 		}
-		else {
-			logger.debug("请求头中未包含token");
+		catch (BusinessException e) {
+			throw e;
+		}
+		catch (Exception e) {
 			throw new BusinessException(CommonEnum.LOGIN_TIMEOUT);
 		}
 	}

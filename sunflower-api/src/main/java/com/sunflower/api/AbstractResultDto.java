@@ -3,6 +3,7 @@ package com.sunflower.api;
 import com.sunflower.constants.error.CommonEnum;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * @author sunflower
@@ -38,55 +39,28 @@ public abstract class AbstractResultDto implements Serializable {
 		this.message = message;
 	}
 
+	@Override
 	public boolean equals(Object o) {
-		if (o == this) {
+		if (this == o) {
 			return true;
 		}
-		else if (!(o instanceof AbstractResultDto)) {
+		if (o == null || getClass() != o.getClass()) {
 			return false;
 		}
-		else {
-			AbstractResultDto other = (AbstractResultDto) o;
-			if (!other.canEqual(this)) {
-				return false;
-			}
-			else {
-				Object this$code = this.getCode();
-				Object other$code = other.getCode();
-				if (this$code == null) {
-					if (other$code != null) {
-						return false;
-					}
-				}
-				else if (!this$code.equals(other$code)) {
-					return false;
-				}
+		AbstractResultDto that = (AbstractResultDto) o;
+		return Objects.equals(code, that.code) && Objects.equals(message, that.message);
+	}
 
-				Object this$message = this.getMessage();
-				Object other$message = other.getMessage();
-				if (this$message == null) {
-					return other$message == null;
-				}
-				else
-					return this$message.equals(other$message);
-
-			}
-		}
+	@Override
+	public int hashCode() {
+		return Objects.hash(code, message);
 	}
 
 	protected boolean canEqual(Object other) {
 		return other instanceof AbstractResultDto;
 	}
 
-	public int hashCode() {
-		int result = 1;
-		Object $code = this.getCode();
-		result = result * 59 + ($code == null ? 43 : $code.hashCode());
-		Object $message = this.getMessage();
-		result = result * 59 + ($message == null ? 43 : $message.hashCode());
-		return result;
-	}
-
+	@Override
 	public String toString() {
 		return "AbstractResultDto(code=" + this.getCode() + ", message="
 				+ this.getMessage() + ")";

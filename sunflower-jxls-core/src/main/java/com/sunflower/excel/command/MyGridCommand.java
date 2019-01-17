@@ -1,6 +1,7 @@
 package com.sunflower.excel.command;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jxls.command.GridCommand;
 import org.jxls.common.CellRef;
 import org.jxls.common.Context;
 import org.jxls.common.Size;
@@ -9,7 +10,7 @@ import org.jxls.common.Size;
  * @Author sunflower
  * @Date 2018/4/26
  */
-public class GridCommand extends org.jxls.command.GridCommand {
+public class MyGridCommand extends GridCommand {
 
 	@Override
 	public Size applyAt(CellRef cellRef, Context context) {

@@ -7,7 +7,7 @@ import com.sunflower.constants.IEnum;
  */
 public class BusinessException extends RuntimeException {
 
-	static final long serialVersionUID = 1L;
+	public static final long serialVersionUID = 1L;
 
 	private String code;
 

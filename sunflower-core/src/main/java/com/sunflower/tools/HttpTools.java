@@ -21,7 +21,6 @@ public class HttpTools {
 
 	public static String send(String url, String jsonStr) {
 		logger.debug(jsonStr);
-		String result = "";
 
 		try {
 			URL realUrl = new URL(url);
@@ -34,15 +33,11 @@ public class HttpTools {
 					"Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
 			connection.setRequestMethod("POST");
 			connection.setDoOutput(true);
-			byte[] bypes = jsonStr.getBytes(StandardCharsets.UTF_8);
-			connection.getOutputStream().write(bypes);
+			byte[] bytes = jsonStr.getBytes(StandardCharsets.UTF_8);
+			connection.getOutputStream().write(bytes);
 			InputStreamReader isr = new InputStreamReader(connection.getInputStream(),
 					StandardCharsets.UTF_8);
 			BufferedReader buffRead = new BufferedReader(isr);
-
-			for (String line = ""; (line = buffRead.readLine()) != null; result = result
-					+ line) {
-			}
 
 			buffRead.close();
 		}
@@ -50,7 +45,7 @@ public class HttpTools {
 			logger.error(e.getMessage(), e);
 		}
 
-		return result;
+		return "OK";
 	}
 
 }

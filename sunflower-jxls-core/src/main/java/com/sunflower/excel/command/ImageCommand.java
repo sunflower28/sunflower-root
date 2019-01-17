@@ -19,6 +19,7 @@ import org.jxls.common.ImageType;
 import org.jxls.common.Size;
 import org.jxls.transform.Transformer;
 import org.jxls.transform.poi.PoiTransformer;
+import org.springframework.util.CollectionUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -79,7 +80,7 @@ public class ImageCommand extends AbstractCommand {
 
 	@Override
 	public Command addArea(Area area) {
-		if (super.getAreaList().size() >= 1) {
+		if (!CollectionUtils.isEmpty(super.getAreaList())) {
 			throw new IllegalArgumentException(
 					"You can add only a single area to 'image' command");
 		}
@@ -98,7 +99,7 @@ public class ImageCommand extends AbstractCommand {
 			throw new IllegalArgumentException("No area is defined for image command");
 		}
 		Transformer transformer = getTransformer();
-		Size size = area.getSize();
+		Size sizeArea = area.getSize();
 
 		try {
 			JxlsImage img = getImage(context);
@@ -108,11 +109,11 @@ public class ImageCommand extends AbstractCommand {
 				}
 				else {
 					// 获取图片显示区域是时候，多加一行和一列，获取完之后再恢复原来大小
-					size.setWidth(size.getWidth() + 1);
-					size.setHeight(size.getHeight() + 1);
-					AreaRef areaRef = new AreaRef(cellRef, size);
-					size.setWidth(size.getWidth() - 1);
-					size.setHeight(size.getHeight() - 1);
+					sizeArea.setWidth(sizeArea.getWidth() + 1);
+					sizeArea.setHeight(sizeArea.getHeight() + 1);
+					AreaRef areaRef = new AreaRef(cellRef, sizeArea);
+					sizeArea.setWidth(sizeArea.getWidth() - 1);
+					sizeArea.setHeight(sizeArea.getHeight() - 1);
 					transformer.addImage(areaRef, img.getPictureData(),
 							img.getJxlsImageType());
 				}
@@ -128,7 +129,7 @@ public class ImageCommand extends AbstractCommand {
 		}
 		// 恢复原有的样式
 		area.applyAt(cellRef, context);
-		return size;
+		return sizeArea;
 	}
 
 	private void addImage(CellRef cellRef, Context context, PoiTransformer transformer,
@@ -145,19 +146,20 @@ public class ImageCommand extends AbstractCommand {
 		anchor.setRow2(cellRef.getRow() + area.getSize().getHeight());
 		Picture pict = drawing.createPicture(anchor, pictureIdx);
 		if (JxlsUtil.me().hasText(scaleX) || JxlsUtil.me().hasText(scaleY)) {
-			double scale_x = 1d, scale_y = 1d;
-			if (JxlsUtil.me().hasText(scaleX)) {
+			double scale2X = 1d;
+			double scale2Y = 1d;
+			if (JxlsUtil.me().hasText(this.scaleX)) {
 				Object scaleXObj = getTransformationConfig().getExpressionEvaluator()
-						.evaluate(scaleX, context.toMap());
-				scale_x = Double.valueOf(scaleXObj.toString());
+						.evaluate(this.scaleX, context.toMap());
+				scale2X = (double) scaleXObj;
 			}
-			if (JxlsUtil.me().hasText(scaleY)) {
+			if (JxlsUtil.me().hasText(this.scaleY)) {
 				Object scaleXObj = getTransformationConfig().getExpressionEvaluator()
-						.evaluate(scaleY, context.toMap());
-				scale_y = Double.valueOf(scaleXObj.toString());
+						.evaluate(this.scaleY, context.toMap());
+				scale2Y = (double) scaleXObj;
 			}
 
-			pict.resize(scale_x, scale_y);
+			pict.resize(scale2X, scale2Y);
 		}
 		else if (JxlsImage.IMAGE_SIZE_TYPE_ORIGINAL.equalsIgnoreCase(size)) {
 			pict.resize();
@@ -183,7 +185,7 @@ public class ImageCommand extends AbstractCommand {
 
 					String imageRoot = (String) context.getVar("_imageRoot");
 					// 判断是相对路径还是绝对路径
-					if (!JxlsUtil.me().isAbsolutePath(imgSrc)) {
+					if (JxlsUtil.me().isAbsolutePath(imgSrc)) {
 						if (imageRoot.startsWith("classpath:")) {
 							// 文件在jar包内
 							String templateRoot = imageRoot.replaceFirst("classpath:",

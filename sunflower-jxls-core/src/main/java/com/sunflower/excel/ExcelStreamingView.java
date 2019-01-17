@@ -20,7 +20,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * @author sunflower
@@ -64,10 +63,9 @@ public class ExcelStreamingView extends AbstractView {
 		transformationConfig.setExpressionEvaluator(jexlExpressionEvaluator);
 		transformer.setTransformationConfig(transformationConfig);
 		Context context = PoiTransformer.createInitialContext();
-		Set<String> set = model.keySet();
 
-		for (String s : set) {
-			context.putVar(s, model.get(s));
+		for (Map.Entry<String, Object> entry : model.entrySet()) {
+			context.putVar(entry.getKey(), entry.getValue());
 		}
 
 		XlsCommentAreaBuilder areaBuilder = new XlsCommentAreaBuilder(transformer);

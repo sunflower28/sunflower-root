@@ -21,11 +21,15 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.*;
 
+/**
+ * @author sunflower
+ */
 @Component
 @Aspect
 public class ApiServiceValidAop {
 
-	public static final Logger LOGGER = LoggerFactory.getLogger(ApiServiceValidAop.class);
+	private static final Logger LOGGER = LoggerFactory
+			.getLogger(ApiServiceValidAop.class);
 
 	@Autowired
 	private Validator validator;
@@ -45,8 +49,8 @@ public class ApiServiceValidAop {
 		// 验证返回类型
 		if (!Arrays.asList(this.env.getActiveProfiles()).contains("prod")
 				&& !AbstractResultDto.class.isAssignableFrom(returnType)) {
-			LOGGER.debug(String.format("请修正%s.%s的返回值类型为%s的子类", pjp.getTarget().getClass(),
-					targetMethod.getName(), AbstractResultDto.class));
+			LOGGER.debug("请修正{}.{}的返回值类型为{}的子类", pjp.getTarget().getClass(),
+					targetMethod.getName(), AbstractResultDto.class);
 		}
 
 		Map<Integer, Object> errorMessages = new HashMap<>();
@@ -96,7 +100,7 @@ public class ApiServiceValidAop {
 
 	}
 
-	private static boolean isEmpty(Object obj) throws IllegalArgumentException {
+	private static boolean isEmpty(Object obj) {
 		if (obj == null) {
 			return true;
 		}

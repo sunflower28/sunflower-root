@@ -7,7 +7,7 @@ import java.net.URL;
  * @Author lnk
  * @Date 2018/1/24
  */
-public class JxlsConfig {
+public final class JxlsConfig {
 
 	/** 模板存放目录 */
 	private static String templateRoot;
@@ -62,15 +62,15 @@ public class JxlsConfig {
 	}
 
 	private String getRealPath(String originalPath) {
-		if (!JxlsUtil.me().isAbsolutePath(originalPath)
+		if (JxlsUtil.me().isAbsolutePath(originalPath)
 				&& !originalPath.startsWith("classpath:/")) {
 			URL resource = JxlsConfig.class.getClassLoader().getResource(originalPath);
 			if (resource != null) {
 				String path = resource.getPath();
 				if (path.contains(".jar")) {
-					int index = path.lastIndexOf("/", path.indexOf("!/BOOT-INF"));
+					int index = path.lastIndexOf('/', path.indexOf("!/BOOT-INF"));
 					path = path.substring(0, index).replaceFirst("file:/", "");
-					File file = new File(path + "/" + originalPath);
+					File file = new File(path + '/' + originalPath);
 					if (file.exists()) {
 						return file.getAbsolutePath();
 					}

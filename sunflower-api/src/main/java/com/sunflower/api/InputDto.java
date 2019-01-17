@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * @author sunflower
@@ -38,49 +39,20 @@ public class InputDto implements Serializable {
 
 	@Override
 	public boolean equals(Object o) {
-		if (o == this) {
+		if (this == o) {
 			return true;
 		}
-		else if (!(o instanceof Object)) {
+		if (!(o instanceof InputDto)) {
 			return false;
 		}
-		else {
-			InputDto other = (InputDto) o;
-			if (!other.canEqual(this)) {
-				return false;
-			}
-			else {
-				Object this$ip = this.getIp();
-				Object other$ip = other.getIp();
-				if (this$ip == null) {
-					if (other$ip != null) {
-						return false;
-					}
-				}
-				else if (!this$ip.equals(other$ip)) {
-					return false;
-				}
-
-				Object this$operator = this.getOperator();
-				Object other$operator = other.getOperator();
-				if (this$operator == null) {
-					return other$operator == null;
-				}
-				else
-					return this$operator.equals(other$operator);
-
-			}
-		}
+		InputDto inputDto = (InputDto) o;
+		return Objects.equals(getIp(), inputDto.getIp())
+				&& Objects.equals(getOperator(), inputDto.getOperator());
 	}
 
 	@Override
 	public int hashCode() {
-		int result = 1;
-		Object ip = this.getIp();
-		result = result * 59 + (ip == null ? 43 : ip.hashCode());
-		Object operator = this.getOperator();
-		result = result * 59 + (operator == null ? 43 : operator.hashCode());
-		return result;
+		return Objects.hash(getIp(), getOperator());
 	}
 
 	protected boolean canEqual(Object other) {

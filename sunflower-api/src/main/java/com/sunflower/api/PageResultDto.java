@@ -2,6 +2,8 @@ package com.sunflower.api;
 
 import com.sunflower.constants.IEnum;
 
+import java.util.Objects;
+
 /**
  * @author sunflower
  * @param <T>
@@ -34,15 +36,15 @@ public class PageResultDto<T> extends AbstractResultDto {
 	}
 
 	public static <T> PageResultDto<T> error(String code, String message) {
-		return new PageResultDto(code, message);
+		return new PageResultDto<>(code, message);
 	}
 
 	public static <T> PageResultDto<T> error(IEnum ienum) {
-		return new PageResultDto(ienum);
+		return new PageResultDto<>(ienum);
 	}
 
 	public static <T> PageResultDto<T> success(PageDto<T> data) {
-		return new PageResultDto(data);
+		return new PageResultDto<>(data);
 	}
 
 	public PageDto<T> getData() {
@@ -53,47 +55,34 @@ public class PageResultDto<T> extends AbstractResultDto {
 		this.data = data;
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (!(o instanceof PageResultDto)) {
+			return false;
+		}
+		if (!super.equals(o)) {
+			return false;
+		}
+		PageResultDto<?> that = (PageResultDto<?>) o;
+		return Objects.equals(getData(), that.getData());
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(super.hashCode(), getData());
+	}
+
+	@Override
 	public String toString() {
 		return "PageResultDto(data=" + this.getData() + ")";
 	}
 
-	public boolean equals(Object o) {
-		if (o == this) {
-			return true;
-		}
-		else if (!(o instanceof PageResultDto)) {
-			return false;
-		}
-		else {
-			PageResultDto<?> other = (PageResultDto) o;
-			if (!other.canEqual(this)) {
-				return false;
-			}
-			else if (!super.equals(o)) {
-				return false;
-			}
-			else {
-				Object this$data = this.getData();
-				Object other$data = other.getData();
-				if (this$data == null) {
-					return other$data == null;
-				}
-				else
-					return this$data.equals(other$data);
-
-			}
-		}
-	}
-
+	@Override
 	protected boolean canEqual(Object other) {
 		return other instanceof PageResultDto;
-	}
-
-	public int hashCode() {
-		int result = super.hashCode();
-		Object $data = this.getData();
-		result = result * 59 + ($data == null ? 43 : $data.hashCode());
-		return result;
 	}
 
 }

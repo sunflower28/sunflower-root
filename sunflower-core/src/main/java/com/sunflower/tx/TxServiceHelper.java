@@ -2,34 +2,32 @@ package com.sunflower.tx;
 
 import org.apache.ibatis.mapping.SqlCommandType;
 
-import java.util.Collections;
-import java.util.HashSet;
+import java.util.EnumSet;
 import java.util.Set;
 
 /**
  * @author sunflower
  */
-public class TxServiceHelper {
+public final class TxServiceHelper {
 
-	private static ThreadLocal<Set<SqlCommandType>> transactionAttribute = new ThreadLocal<>();
+	private static ThreadLocal<EnumSet<SqlCommandType>> transactionAttribute = new ThreadLocal<>();
 
-	public TxServiceHelper() {
+	private TxServiceHelper() {
 	}
 
 	public static void add(SqlCommandType type) {
-		Set<SqlCommandType> set = transactionAttribute.get();
+		EnumSet<SqlCommandType> set = transactionAttribute.get();
 		if (set == null) {
-			set = new HashSet<>();
+			set = EnumSet.noneOf(SqlCommandType.class);
 			transactionAttribute.set(set);
 		}
-
 		set.add(type);
 	}
 
 	public static void addAll(Set<SqlCommandType> sets) {
-		Set<SqlCommandType> set = transactionAttribute.get();
+		EnumSet<SqlCommandType> set = transactionAttribute.get();
 		if (set == null) {
-			set = new HashSet<>();
+			set = EnumSet.noneOf(SqlCommandType.class);
 			transactionAttribute.set(set);
 		}
 
@@ -37,8 +35,8 @@ public class TxServiceHelper {
 	}
 
 	public static Set<SqlCommandType> get() {
-		Set set = transactionAttribute.get();
-		return set == null ? Collections.emptySet() : set;
+		EnumSet<SqlCommandType> set = transactionAttribute.get();
+		return set == null ? EnumSet.noneOf(SqlCommandType.class) : set;
 	}
 
 	public static void removeAll() {

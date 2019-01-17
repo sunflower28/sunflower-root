@@ -3,6 +3,7 @@ package com.sunflower.config.pac4jcas;
 import com.sunflower.config.pac4jcas.cache.redis.RedisCacheManager;
 import com.sunflower.config.pac4jcas.cache.redis.RedisSessionDAO;
 import com.sunflower.config.pac4jcas.cache.redis.SessionRedisTemplate;
+import com.sunflower.exceptions.BusinessException;
 import io.buji.pac4j.filter.CallbackFilter;
 import io.buji.pac4j.filter.LogoutFilter;
 import io.buji.pac4j.filter.SecurityFilter;
@@ -23,6 +24,7 @@ import org.apache.shiro.spring.web.config.DefaultShiroFilterChainDefinition;
 import org.apache.shiro.spring.web.config.ShiroFilterChainDefinition;
 import org.apache.shiro.web.mgt.CookieRememberMeManager;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
+import org.apache.shiro.web.mgt.WebSecurityManager;
 import org.apache.shiro.web.servlet.SimpleCookie;
 import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
 import org.jasig.cas.client.session.SingleSignOutFilter;
@@ -30,7 +32,6 @@ import org.jasig.cas.client.session.SingleSignOutHttpSessionListener;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.cas.client.rest.CasRestFormClient;
 import org.pac4j.cas.config.CasConfiguration;
-import org.pac4j.core.client.Client;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.logout.handler.DefaultLogoutHandler;
@@ -52,11 +53,15 @@ import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertyResolver;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.util.StringUtils;
 import org.springframework.web.filter.DelegatingFilterProxy;
 
 import javax.servlet.Filter;
 import java.util.Map;
 
+/**
+ * @author sunflower
+ */
 @Configuration
 public class ShiroPac4jConfig extends AbstractShiroWebFilterConfiguration {
 
@@ -67,7 +72,7 @@ public class ShiroPac4jConfig extends AbstractShiroWebFilterConfiguration {
 
 	@Bean
 	protected JwtGenerator<CommonProfile> jwtGenerator() {
-		return new JwtGenerator(new SecretSignatureConfiguration(this.salt),
+		return new JwtGenerator<>(new SecretSignatureConfiguration(this.salt),
 				new SecretEncryptionConfiguration(this.salt));
 	}
 
@@ -90,7 +95,7 @@ public class ShiroPac4jConfig extends AbstractShiroWebFilterConfiguration {
 				casProperties.getCasServerUrlPrefix() + "/sunflower-cas/login");
 		configuration
 				.setPrefixUrl(casProperties.getCasServerUrlPrefix() + "/sunflower-cas/");
-		Store<String, Object> redisStore = new RedisStore(redisTemplateObject,
+		Store<String, Object> redisStore = new RedisStore<>(redisTemplateObject,
 				env.getActiveProfiles()[0] + "_pac4j_store_");
 		configuration.setLogoutHandler(new DefaultLogoutHandler(redisStore));
 		return configuration;
@@ -120,9 +125,12 @@ public class ShiroPac4jConfig extends AbstractShiroWebFilterConfiguration {
 			CasConfiguration casConfiguration, CasProperties casProperties) {
 		CasClient casClient = new CasClient();
 		casClient.setConfiguration(casConfiguration);
+		String applicationName = resolver.getProperty("spring.application.name");
+		if (StringUtils.isEmpty(applicationName)) {
+			throw new BusinessException("请配置项目名称");
+		}
 		casClient.setCallbackUrl(casProperties.getCasServerUrlPrefix() + "/"
-				+ resolver.getProperty("spring.application.name").split("-")[0]
-				+ "/callback");
+				+ applicationName.split("-")[0] + "/callback");
 		casClient.setName(resolver.getProperty("spring.application.name"));
 		return casClient;
 	}
@@ -152,7 +160,7 @@ public class ShiroPac4jConfig extends AbstractShiroWebFilterConfiguration {
 
 	@Bean
 	public ServletListenerRegistrationBean<SingleSignOutHttpSessionListener> singleSignOutHttpSessionListener() {
-		return new ServletListenerRegistrationBean(
+		return new ServletListenerRegistrationBean<>(
 				new SingleSignOutHttpSessionListener());
 	}
 
@@ -160,7 +168,7 @@ public class ShiroPac4jConfig extends AbstractShiroWebFilterConfiguration {
 	@Order(-2147483648)
 	public FilterRegistrationBean<SingleSignOutFilter> singleSignOutFilter(
 			CasProperties casProperties) {
-		FilterRegistrationBean<SingleSignOutFilter> bean = new FilterRegistrationBean();
+		FilterRegistrationBean<SingleSignOutFilter> bean = new FilterRegistrationBean<>();
 		SingleSignOutFilter singleSignOutFilter = new SingleSignOutFilter();
 		singleSignOutFilter.setCasServerUrlPrefix(
 				casProperties.getCasServerUrlPrefix() + "/sunflower-cas/");
@@ -193,7 +201,7 @@ public class ShiroPac4jConfig extends AbstractShiroWebFilterConfiguration {
 	@Bean
 	public CacheManager cacheManager(RedisTemplate<String, Object> redisTemplateObject,
 			Environment env) {
-		RedisCacheManager<String, Object> cacheManager = new RedisCacheManager();
+		RedisCacheManager<String, Object> cacheManager = new RedisCacheManager<>();
 		cacheManager.setRedisTemplate(redisTemplateObject);
 		cacheManager.setShiroCacheKeyPrefix(env.getActiveProfiles()[0] + "_shiro_cache_");
 		return cacheManager;
@@ -226,7 +234,7 @@ public class ShiroPac4jConfig extends AbstractShiroWebFilterConfiguration {
 
 	@Bean
 	public FilterRegistrationBean<DelegatingFilterProxy> shiroFilter() {
-		FilterRegistrationBean<DelegatingFilterProxy> filterRegistrationBean = new FilterRegistrationBean();
+		FilterRegistrationBean<DelegatingFilterProxy> filterRegistrationBean = new FilterRegistrationBean<>();
 		DelegatingFilterProxy delegateFilter = new DelegatingFilterProxy(
 				"shiroFilterFactoryBean");
 		delegateFilter.setTargetFilterLifecycle(true);
@@ -244,8 +252,9 @@ public class ShiroPac4jConfig extends AbstractShiroWebFilterConfiguration {
 	 *
 	 */
 	@Bean({ "shiroFilterFactoryBean" })
-	protected ShiroFilterFactoryBean shiroFilterFactoryBean(Environment env,
-			CasProperties casProperties, DefaultWebSecurityManager securityManager,
+	protected ShiroFilterFactoryBean shiroFilterFactoryBean(
+			PropertyResolver propertyResolver, CasProperties casProperties,
+			WebSecurityManager securityManager,
 			ShiroFilterChainDefinition shiroFilterChainDefinition, Config config) {
 		ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
 		shiroFilterFactoryBean.setSecurityManager(securityManager);
@@ -256,8 +265,8 @@ public class ShiroPac4jConfig extends AbstractShiroWebFilterConfiguration {
 		Map<String, Filter> filters = shiroFilterFactoryBean.getFilters();
 		SecurityFilter securityFilter = new SecurityFilter();
 		securityFilter.setConfig(config);
-		securityFilter
-				.setClients(env.getProperty("spring.application.name") + ",rest,jwt");
+		securityFilter.setClients(
+				propertyResolver.getProperty("spring.application.name") + ",rest,jwt");
 		filters.put(SecurityFilter.class.getSimpleName(), securityFilter);
 		LogoutFilter logoutFilter = new LogoutFilter();
 		logoutFilter.setConfig(config);

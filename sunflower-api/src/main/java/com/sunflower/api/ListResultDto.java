@@ -4,6 +4,7 @@ import com.sunflower.constants.IEnum;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public class ListResultDto<T> extends AbstractResultDto {
 
@@ -34,15 +35,15 @@ public class ListResultDto<T> extends AbstractResultDto {
 	}
 
 	public static <T> ListResultDto<T> error(String code, String message) {
-		return new ListResultDto(code, message);
+		return new ListResultDto<>(code, message);
 	}
 
 	public static <T> ListResultDto<T> error(IEnum ienum) {
-		return new ListResultDto(ienum);
+		return new ListResultDto<>(ienum);
 	}
 
 	public static <T> ListResultDto<T> success(List<T> data) {
-		return new ListResultDto(data);
+		return new ListResultDto<>(data);
 	}
 
 	public List<T> getData() {
@@ -53,47 +54,34 @@ public class ListResultDto<T> extends AbstractResultDto {
 		this.data = data;
 	}
 
+	@Override
 	public String toString() {
 		return "ListResultDto(data=" + this.getData() + ")";
 	}
 
+	@Override
 	public boolean equals(Object o) {
-		if (o == this) {
+		if (this == o) {
 			return true;
 		}
-		else if (!(o instanceof ListResultDto)) {
+		if (!(o instanceof ListResultDto)) {
 			return false;
 		}
-		else {
-			ListResultDto<?> other = (ListResultDto) o;
-			if (!other.canEqual(this)) {
-				return false;
-			}
-			else if (!super.equals(o)) {
-				return false;
-			}
-			else {
-				Object this$data = this.getData();
-				Object other$data = other.getData();
-				if (this$data == null) {
-					return other$data == null;
-				}
-				else
-					return this$data.equals(other$data);
-
-			}
+		if (!super.equals(o)) {
+			return false;
 		}
+		ListResultDto<?> that = (ListResultDto<?>) o;
+		return Objects.equals(getData(), that.getData());
 	}
 
+	@Override
+	public int hashCode() {
+		return Objects.hash(super.hashCode(), getData());
+	}
+
+	@Override
 	protected boolean canEqual(Object other) {
 		return other instanceof ListResultDto;
-	}
-
-	public int hashCode() {
-		int result = super.hashCode();
-		Object data = this.getData();
-		result = result * 59 + (data == null ? 43 : data.hashCode());
-		return result;
 	}
 
 }

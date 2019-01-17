@@ -111,6 +111,10 @@
 					<groupId>xmlpull</groupId>
 					<artifactId>xmlpull</artifactId>
 				</exclusion>
+				<exclusion>
+					<groupId>com.google.code.findbugs</groupId>
+					<artifactId>jsr305</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 		<!--<dependency>

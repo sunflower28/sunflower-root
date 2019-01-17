@@ -28,22 +28,24 @@ public class RedisCache<K, V> implements Cache<K, V> {
 
 	@SuppressWarnings("unchecked")
 	private K getKey(K key) {
-		return (K) (this.keyPrefix.toString() + key.toString());
+		StringBuilder stringBuilder = new StringBuilder();
+		stringBuilder.append(this.keyPrefix).append(key);
+		return (K) (stringBuilder);
 	}
 
 	@Override
-	public V get(K key) throws CacheException {
+	public V get(K key) {
 		return this.redisTemplate.opsForValue().get(this.getKey(key));
 	}
 
 	@Override
-	public V put(K key, V value) throws CacheException {
+	public V put(K key, V value) {
 		this.redisTemplate.opsForValue().set(this.getKey(key), value);
 		return value;
 	}
 
 	@Override
-	public V remove(K key) throws CacheException {
+	public V remove(K key) {
 		V previous = this.get(key);
 		if (previous != null) {
 			this.redisTemplate.delete(this.getKey(key));

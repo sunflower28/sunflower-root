@@ -51,11 +51,14 @@ public final class Servlets {
 	}
 
 	public static boolean isInnerIpRequest(String ipAddress) {
-		if (ipAddress.contains(":")) {
+		if (ipAddress == null) {
+			return false;
+		}
+		else if (ipAddress.contains(":")) {
 			return true;
 		}
 		else {
-			boolean isInnerIp = false;
+			boolean isInnerIp;
 			long ipNum = getIpNum(ipAddress);
 			long aBegin = getIpNum("10.0.0.0");
 			long aEnd = getIpNum("10.255.255.255");
@@ -64,7 +67,7 @@ public final class Servlets {
 			long cBegin = getIpNum("192.168.0.0");
 			long cEnd = getIpNum("192.168.255.255");
 			isInnerIp = isInner(ipNum, aBegin, aEnd) || isInner(ipNum, bBegin, bEnd)
-					|| isInner(ipNum, cBegin, cEnd) || ipAddress.equals("127.0.0.1");
+					|| isInner(ipNum, cBegin, cEnd) || "127.0.0.1".equals(ipAddress);
 			return isInnerIp;
 		}
 	}

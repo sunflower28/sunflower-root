@@ -34,30 +34,35 @@ public class GlobalDefultExceptionHandler {
 	}
 
 	@ExceptionHandler({ BusinessException.class })
+	@SuppressWarnings({ "unchecked" })
 	public ResponseEntity<ResultDto<Object>> handleMissingServletRequestParameterException(
 			BusinessException e) {
-		logger.error(e.getCode() + "----------" + e.getMessage(), e);
+		logger.error("系统异常：{}", e.getMessage());
+
+		ResultDto<Object> error = ResultDto.error(e.getCode(), e.getMessage());
+		error.setData(e.getData());
+
 		if (e.getCode().equalsIgnoreCase(CommonEnum.PARAM_VALID_FAIL.code())
 				&& e.getData() instanceof HashMap) {
-			Map<Integer, Object> errorMessagesMap = (Map<Integer, Object>) e.getData();
-			for (Integer integer : errorMessagesMap.keySet()) {
-				Object errorMessage = errorMessagesMap.get(integer);
-				if (errorMessage instanceof HashMap) {
-					Map<String, String> errorMessageMap = (HashMap<String, String>) errorMessage;
-					for (String s : errorMessageMap.keySet()) {
-						if (StringUtils.hasText(errorMessageMap.get(s))) {
-							ResultDto<Object> error = ResultDto.error(e.getCode(),
-									errorMessageMap.get(s));
-							error.setData(e.getData());
-							return new ResponseEntity<>(error, HttpStatus.OK);
-						}
+			return new ResponseEntity<>(error, HttpStatus.OK);
+		}
+		Map<Integer, Object> errorMessagesMap = (Map<Integer, Object>) e.getData();
+		for (Map.Entry<Integer, Object> entry : errorMessagesMap.entrySet()) {
+			Object errorMessage = entry.getValue();
+			if (errorMessage instanceof HashMap) {
+				Map<String, String> errorMessageMap = (HashMap<String, String>) errorMessage;
+				for (Map.Entry<String, String> errorMessageEntry : errorMessageMap
+						.entrySet()) {
+					if (StringUtils.hasText(errorMessageEntry.getValue())) {
+						error = ResultDto.error(e.getCode(),
+								errorMessageEntry.getValue());
+						error.setData(e.getData());
+						return new ResponseEntity<>(error, HttpStatus.OK);
 					}
 				}
 			}
 		}
 
-		ResultDto<Object> error = ResultDto.error(e.getCode(), e.getMessage());
-		error.setData(e.getData());
 		return new ResponseEntity<>(error, HttpStatus.OK);
 	}
 
@@ -66,7 +71,7 @@ public class GlobalDefultExceptionHandler {
 			BindException.class, ValidationException.class })
 	public ResponseEntity<ResultDto<Object>> handleMissingServletRequestParameterException(
 			Exception e) {
-		logger.error(e.getMessage(), e);
+		logger.error("参数异常：{}", e.getMessage());
 		return new ResponseEntity<>(ResultDto.error(CommonEnum.HTTP_FAIL_400),
 				HttpStatus.BAD_REQUEST);
 	}
@@ -74,7 +79,7 @@ public class GlobalDefultExceptionHandler {
 	@ExceptionHandler({ HttpRequestMethodNotSupportedException.class })
 	public ResponseEntity<ResultDto<Object>> handleHttpRequestMethodNotSupportedException(
 			Exception e) {
-		logger.error(e.getMessage(), e);
+		logger.error("无效请求：{}", e.getMessage());
 		return new ResponseEntity<>(ResultDto.error(CommonEnum.HTTP_FAIL_405),
 				HttpStatus.METHOD_NOT_ALLOWED);
 	}
@@ -82,14 +87,14 @@ public class GlobalDefultExceptionHandler {
 	@ExceptionHandler({ HttpMediaTypeNotSupportedException.class })
 	public ResponseEntity<ResultDto<Object>> handleHttpMediaTypeNotSupportedException(
 			Exception e) {
-		logger.error(e.getMessage(), e);
+		logger.error("无效请求：{}", e.getMessage());
 		return new ResponseEntity<>(ResultDto.error(CommonEnum.HTTP_FAIL_415),
 				HttpStatus.UNSUPPORTED_MEDIA_TYPE);
 	}
 
 	@ExceptionHandler({ Exception.class })
 	public ResponseEntity<ResultDto<Object>> handleOtherExceptions(Exception e) {
-		logger.error(e.getMessage(), e);
+		logger.error("系统异常，请重试：{}", e.getMessage());
 		return new ResponseEntity<>(ResultDto.error(CommonEnum.HTTP_FAIL_500),
 				HttpStatus.INTERNAL_SERVER_ERROR);
 	}

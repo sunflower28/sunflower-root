@@ -2,6 +2,8 @@ package com.sunflower.api;
 
 import com.sunflower.constants.IEnum;
 
+import java.util.Objects;
+
 /**
  * @author sunflower
  */
@@ -54,47 +56,34 @@ public class ResultDto<T> extends AbstractResultDto {
 		this.data = data;
 	}
 
+	@Override
 	public String toString() {
 		return "ResultDto(data=" + this.getData() + ")";
 	}
 
-	public boolean equals(Object o) {
-		if (o == this) {
-			return true;
-		}
-		else if (!(o instanceof ResultDto)) {
-			return false;
-		}
-		else {
-			ResultDto<?> other = (ResultDto) o;
-			if (!other.canEqual(this)) {
-				return false;
-			}
-			else if (!super.equals(o)) {
-				return false;
-			}
-			else {
-				Object this$data = this.getData();
-				Object other$data = other.getData();
-				if (this$data == null) {
-					return other$data == null;
-				}
-				else
-					return this$data.equals(other$data);
-
-			}
-		}
-	}
-
+	@Override
 	protected boolean canEqual(Object other) {
 		return other instanceof ResultDto;
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (!(o instanceof ResultDto)) {
+			return false;
+		}
+		if (!super.equals(o)) {
+			return false;
+		}
+		ResultDto<?> resultDto = (ResultDto<?>) o;
+		return Objects.equals(getData(), resultDto.getData());
+	}
+
+	@Override
 	public int hashCode() {
-		int result = super.hashCode();
-		Object data = this.getData();
-		result = result * 59 + (data == null ? 43 : data.hashCode());
-		return result;
+		return Objects.hash(super.hashCode(), getData());
 	}
 
 }

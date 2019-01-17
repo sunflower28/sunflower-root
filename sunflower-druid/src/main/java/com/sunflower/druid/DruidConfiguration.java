@@ -17,6 +17,7 @@ import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author hankui
@@ -93,7 +94,6 @@ public class DruidConfiguration {
 		datasource.setPoolPreparedStatements(this.poolPreparedStatements);
 		datasource.setMaxPoolPreparedStatementPerConnectionSize(
 				this.maxPoolPreparedStatementPerConnectionSize);
-		// datasource.setPasswordCallback(new DruidPassworkCallbackBrc());
 		List<String> connectionInitSqls = new ArrayList<>();
 		connectionInitSqls.add("set names utf8mb4");
 		datasource.setConnectionInitSqls(connectionInitSqls);
@@ -112,7 +112,7 @@ public class DruidConfiguration {
 	@Bean
 	public ServletRegistrationBean<StatViewServlet> druidServlet() {
 		logger.debug("init Druid Servlet Configuration ");
-		ServletRegistrationBean<StatViewServlet> servletRegistrationBean = new ServletRegistrationBean(
+		ServletRegistrationBean<StatViewServlet> servletRegistrationBean = new ServletRegistrationBean<>(
 				new StatViewServlet(), this.statViewServletMapping);
 		servletRegistrationBean.addInitParameter("loginUsername",
 				this.statViewServletLoginUsername);
@@ -127,7 +127,7 @@ public class DruidConfiguration {
 	public FilterRegistrationBean<WebStatFilter> filterRegistrationBean() {
 		WebStatFilter webStatFilter = new WebStatFilter();
 		webStatFilter.setSessionStatEnable(false);
-		FilterRegistrationBean<WebStatFilter> filterRegistrationBean = new FilterRegistrationBean(
+		FilterRegistrationBean<WebStatFilter> filterRegistrationBean = new FilterRegistrationBean<>(
 				webStatFilter);
 		filterRegistrationBean.addUrlPatterns("/*");
 		filterRegistrationBean.addInitParameter("exclusions",
@@ -317,245 +317,60 @@ public class DruidConfiguration {
 
 	@Override
 	public boolean equals(Object o) {
-		if (o == this) {
+		if (this == o) {
 			return true;
 		}
-		else if (!(o instanceof DruidConfiguration)) {
+		if (!(o instanceof DruidConfiguration)) {
 			return false;
 		}
-		else {
-			DruidConfiguration other = (DruidConfiguration) o;
-			if (!other.canEqual(this)) {
-				return false;
-			}
-			else {
-				label175: {
-					Object this$url = this.getUrl();
-					Object other$url = other.getUrl();
-					if (this$url == null) {
-						if (other$url == null) {
-							break label175;
-						}
-					}
-					else if (this$url.equals(other$url)) {
-						break label175;
-					}
-
-					return false;
-				}
-
-				Object this$username = this.getUsername();
-				Object other$username = other.getUsername();
-				if (this$username == null) {
-					if (other$username != null) {
-						return false;
-					}
-				}
-				else if (!this$username.equals(other$username)) {
-					return false;
-				}
-
-				Object this$driverClassName = this.getDriverClassName();
-				Object other$driverClassName = other.getDriverClassName();
-				if (this$driverClassName == null) {
-					if (other$driverClassName != null) {
-						return false;
-					}
-				}
-				else if (!this$driverClassName.equals(other$driverClassName)) {
-					return false;
-				}
-
-				if (this.getInitialSize() != other.getInitialSize()) {
-					return false;
-				}
-				else if (this.getMinIdle() != other.getMinIdle()) {
-					return false;
-				}
-				else if (this.getMaxActive() != other.getMaxActive()) {
-					return false;
-				}
-				else if (this.getMaxWait() != other.getMaxWait()) {
-					return false;
-				}
-				else if (this.getTimeBetweenEvictionRunsMillis() != other
-						.getTimeBetweenEvictionRunsMillis()) {
-					return false;
-				}
-				else if (this.getMinEvictableIdleTimeMillis() != other
-						.getMinEvictableIdleTimeMillis()) {
-					return false;
-				}
-				else if (this.isTestWhileIdle() != other.isTestWhileIdle()) {
-					return false;
-				}
-				else if (this.isTestOnBorrow() != other.isTestOnBorrow()) {
-					return false;
-				}
-				else if (this.isTestOnReturn() != other.isTestOnReturn()) {
-					return false;
-				}
-				else if (this.isPoolPreparedStatements() != other
-						.isPoolPreparedStatements()) {
-					return false;
-				}
-				else if (this.getMaxPoolPreparedStatementPerConnectionSize() != other
-						.getMaxPoolPreparedStatementPerConnectionSize()) {
-					return false;
-				}
-				else {
-					Object this$filters = this.getFilters();
-					Object other$filters = other.getFilters();
-					if (this$filters == null) {
-						if (other$filters != null) {
-							return false;
-						}
-					}
-					else if (!this$filters.equals(other$filters)) {
-						return false;
-					}
-
-					Object this$connectionProperties = this.getConnectionProperties();
-					Object other$connectionProperties = other.getConnectionProperties();
-					if (this$connectionProperties == null) {
-						if (other$connectionProperties != null) {
-							return false;
-						}
-					}
-					else if (!this$connectionProperties
-							.equals(other$connectionProperties)) {
-						return false;
-					}
-
-					label124: {
-						Object this$webStatFilterExclusions = this
-								.getWebStatFilterExclusions();
-						Object other$webStatFilterExclusions = other
-								.getWebStatFilterExclusions();
-						if (this$webStatFilterExclusions == null) {
-							if (other$webStatFilterExclusions == null) {
-								break label124;
-							}
-						}
-						else if (this$webStatFilterExclusions
-								.equals(other$webStatFilterExclusions)) {
-							break label124;
-						}
-
-						return false;
-					}
-
-					Object this$statViewServletMapping = this.getStatViewServletMapping();
-					Object other$statViewServletMapping = other
-							.getStatViewServletMapping();
-					if (this$statViewServletMapping == null) {
-						if (other$statViewServletMapping != null) {
-							return false;
-						}
-					}
-					else if (!this$statViewServletMapping
-							.equals(other$statViewServletMapping)) {
-						return false;
-					}
-
-					Object this$statViewServletLoginUsername = this
-							.getStatViewServletLoginUsername();
-					Object other$statViewServletLoginUsername = other
-							.getStatViewServletLoginUsername();
-					if (this$statViewServletLoginUsername == null) {
-						if (other$statViewServletLoginUsername != null) {
-							return false;
-						}
-					}
-					else if (!this$statViewServletLoginUsername
-							.equals(other$statViewServletLoginUsername)) {
-						return false;
-					}
-
-					label103: {
-						Object this$statViewServletLoginPassword = this
-								.getStatViewServletLoginPassword();
-						Object other$statViewServletLoginPassword = other
-								.getStatViewServletLoginPassword();
-						if (this$statViewServletLoginPassword == null) {
-							if (other$statViewServletLoginPassword == null) {
-								break label103;
-							}
-						}
-						else if (this$statViewServletLoginPassword
-								.equals(other$statViewServletLoginPassword)) {
-							break label103;
-						}
-
-						return false;
-					}
-
-					Object this$statViewServletResetEnable = this
-							.getStatViewServletResetEnable();
-					Object other$statViewServletResetEnable = other
-							.getStatViewServletResetEnable();
-					if (this$statViewServletResetEnable == null) {
-						return other$statViewServletResetEnable == null;
-					}
-					else
-						return this$statViewServletResetEnable
-								.equals(other$statViewServletResetEnable);
-
-				}
-			}
-		}
-	}
-
-	protected boolean canEqual(Object other) {
-		return other instanceof DruidConfiguration;
+		DruidConfiguration that = (DruidConfiguration) o;
+		return getInitialSize() == that.getInitialSize()
+				&& getMinIdle() == that.getMinIdle()
+				&& getMaxActive() == that.getMaxActive()
+				&& getMaxWait() == that.getMaxWait()
+				&& getTimeBetweenEvictionRunsMillis() == that
+						.getTimeBetweenEvictionRunsMillis()
+				&& getMinEvictableIdleTimeMillis() == that.getMinEvictableIdleTimeMillis()
+				&& isTestWhileIdle() == that.isTestWhileIdle()
+				&& isTestOnBorrow() == that.isTestOnBorrow()
+				&& isTestOnReturn() == that.isTestOnReturn()
+				&& isPoolPreparedStatements() == that.isPoolPreparedStatements()
+				&& getMaxPoolPreparedStatementPerConnectionSize() == that
+						.getMaxPoolPreparedStatementPerConnectionSize()
+				&& Objects.equals(getUrl(), that.getUrl())
+				&& Objects.equals(getUsername(), that.getUsername())
+				&& Objects.equals(getPassword(), that.getPassword())
+				&& Objects.equals(getDriverClassName(), that.getDriverClassName())
+				&& Objects.equals(getFilters(), that.getFilters())
+				&& Objects.equals(getConnectionProperties(),
+						that.getConnectionProperties())
+				&& Objects.equals(getWebStatFilterExclusions(),
+						that.getWebStatFilterExclusions())
+				&& Objects.equals(getStatViewServletMapping(),
+						that.getStatViewServletMapping())
+				&& Objects.equals(getStatViewServletLoginUsername(),
+						that.getStatViewServletLoginUsername())
+				&& Objects.equals(getStatViewServletLoginPassword(),
+						that.getStatViewServletLoginPassword())
+				&& Objects.equals(getStatViewServletResetEnable(),
+						that.getStatViewServletResetEnable());
 	}
 
 	@Override
 	public int hashCode() {
-		int result = 1;
-		Object $url = this.getUrl();
-		result = result * 59 + ($url == null ? 43 : $url.hashCode());
-		Object $username = this.getUsername();
-		result = result * 59 + ($username == null ? 43 : $username.hashCode());
-		Object $driverClassName = this.getDriverClassName();
-		result = result * 59
-				+ ($driverClassName == null ? 43 : $driverClassName.hashCode());
-		result = result * 59 + this.getInitialSize();
-		result = result * 59 + this.getMinIdle();
-		result = result * 59 + this.getMaxActive();
-		result = result * 59 + this.getMaxWait();
-		long $timeBetweenEvictionRunsMillis = this.getTimeBetweenEvictionRunsMillis();
-		result = result * 59 + (int) ($timeBetweenEvictionRunsMillis >>> 32
-				^ $timeBetweenEvictionRunsMillis);
-		long $minEvictableIdleTimeMillis = this.getMinEvictableIdleTimeMillis();
-		result = result * 59 + (int) ($minEvictableIdleTimeMillis >>> 32
-				^ $minEvictableIdleTimeMillis);
-		result = result * 59 + (this.isTestWhileIdle() ? 79 : 97);
-		result = result * 59 + (this.isTestOnBorrow() ? 79 : 97);
-		result = result * 59 + (this.isTestOnReturn() ? 79 : 97);
-		result = result * 59 + (this.isPoolPreparedStatements() ? 79 : 97);
-		result = result * 59 + this.getMaxPoolPreparedStatementPerConnectionSize();
-		Object $filters = this.getFilters();
-		result = result * 59 + ($filters == null ? 43 : $filters.hashCode());
-		Object $connectionProperties = this.getConnectionProperties();
-		result = result * 59
-				+ ($connectionProperties == null ? 43 : $connectionProperties.hashCode());
-		Object $webStatFilterExclusions = this.getWebStatFilterExclusions();
-		result = result * 59 + ($webStatFilterExclusions == null ? 43
-				: $webStatFilterExclusions.hashCode());
-		Object $statViewServletMapping = this.getStatViewServletMapping();
-		result = result * 59 + ($statViewServletMapping == null ? 43
-				: $statViewServletMapping.hashCode());
-		Object $statViewServletLoginUsername = this.getStatViewServletLoginUsername();
-		result = result * 59 + ($statViewServletLoginUsername == null ? 43
-				: $statViewServletLoginUsername.hashCode());
-		Object $statViewServletLoginPassword = this.getStatViewServletLoginPassword();
-		result = result * 59 + ($statViewServletLoginPassword == null ? 43
-				: $statViewServletLoginPassword.hashCode());
-		Object $statViewServletResetEnable = this.getStatViewServletResetEnable();
-		result = result * 59 + ($statViewServletResetEnable == null ? 43
-				: $statViewServletResetEnable.hashCode());
-		return result;
+		return Objects.hash(getUrl(), getUsername(), getPassword(), getDriverClassName(),
+				getInitialSize(), getMinIdle(), getMaxActive(), getMaxWait(),
+				getTimeBetweenEvictionRunsMillis(), getMinEvictableIdleTimeMillis(),
+				isTestWhileIdle(), isTestOnBorrow(), isTestOnReturn(),
+				isPoolPreparedStatements(),
+				getMaxPoolPreparedStatementPerConnectionSize(), getFilters(),
+				getConnectionProperties(), getWebStatFilterExclusions(),
+				getStatViewServletMapping(), getStatViewServletLoginUsername(),
+				getStatViewServletLoginPassword(), getStatViewServletResetEnable());
+	}
+
+	protected boolean canEqual(Object other) {
+		return other instanceof DruidConfiguration;
 	}
 
 	@Override

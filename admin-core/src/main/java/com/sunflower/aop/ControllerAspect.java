@@ -128,13 +128,13 @@ public class ControllerAspect {
 						method.getName()));
 			}
 
-			if (sb.length() > 0) {
-				logger.debug(sb.toString());
+			if (sb.length() > 0 && logger.isDebugEnabled()) {
+				logger.debug("警告：{}", sb.toString());
 			}
 		}
 
 		HttpServletRequest request = Servlets.getRequest();
-		SunflowerCookieUtil.set(request.getCookies());
+		SunflowerCookieUtil.set(request == null ? null : request.getCookies());
 		String ip = Servlets.getIpAddr(request);
 		Object result;
 		if (prodEnv
@@ -154,9 +154,9 @@ public class ControllerAspect {
 		}
 
 		BackCommonLogEntity logEntity = new BackCommonLogEntity();
-		logEntity.setUrl(request.getRequestURL().toString());
+		logEntity.setUrl(request == null ? null : request.getRequestURL().toString());
 		logEntity.setIp(ip);
-		logEntity.setMethod(request.getMethod());
+		logEntity.setMethod(request == null ? null : request.getMethod());
 		logEntity.setClassAndMethod(
 				method.getDeclaringClass().getName() + "." + method.getName());
 		Object[] args = pjp.getArgs();
@@ -178,38 +178,44 @@ public class ControllerAspect {
 		logEntity.setCreateBy(profile == null ? null : profile.getUserId());
 		long duration = System.currentTimeMillis() - beginTime;
 		logEntity.setDuration(duration);
-		logger.debug("耗时 : " + duration);
+		if (logger.isDebugEnabled()) {
+			logger.debug("耗时：{0}" ,duration);
+		}
+
 		this.executor.execute(() -> {
 			long logStartTime = System.currentTimeMillis();
 			Connection connection = null;
-			PreparedStatement pstmt = null;
+			PreparedStatement preparedStatement = null;
 
 			try {
 				connection = this.dataSource.getConnection();
 				String sql = "insert into back_common_log_entity(id,url,method,ip,class_and_method,params,result,create_date,create_by,duration,day)values(?,?,?,?,?,?,?,?,?,?,?)";
-				pstmt = connection.prepareStatement(sql);
-				pstmt.setString(1, UUID.randomUUID().toString().replace("-", ""));
-				pstmt.setString(2, logEntity.getUrl());
-				pstmt.setString(3, logEntity.getMethod());
-				pstmt.setString(4, logEntity.getIp());
-				pstmt.setString(5, logEntity.getClassAndMethod());
-				pstmt.setString(6,
+				preparedStatement = connection.prepareStatement(sql);
+				preparedStatement.setString(1,
+						UUID.randomUUID().toString().replace("-", ""));
+				preparedStatement.setString(2, logEntity.getUrl());
+				preparedStatement.setString(3, logEntity.getMethod());
+				preparedStatement.setString(4, logEntity.getIp());
+				preparedStatement.setString(5, logEntity.getClassAndMethod());
+				preparedStatement.setString(6,
 						this.objectMapper.writeValueAsString(logEntity.getParams()));
-				pstmt.setString(7,
+				preparedStatement.setString(7,
 						this.objectMapper.writeValueAsString(logEntity.getResult()));
-				pstmt.setTimestamp(8, new Timestamp(logEntity.getCreateDate().getTime()));
-				pstmt.setString(9, logEntity.getCreateBy());
-				pstmt.setLong(10, logEntity.getDuration());
-				pstmt.setDate(11, new java.sql.Date(logEntity.getDay().getTime()));
-				pstmt.executeUpdate();
+				preparedStatement.setTimestamp(8,
+						new Timestamp(logEntity.getCreateDate().getTime()));
+				preparedStatement.setString(9, logEntity.getCreateBy());
+				preparedStatement.setLong(10, logEntity.getDuration());
+				preparedStatement.setDate(11,
+						new java.sql.Date(logEntity.getDay().getTime()));
+				preparedStatement.executeUpdate();
 			}
 			catch (Exception e) {
 				logger.error(e.getMessage(), e);
 			}
 			finally {
 				try {
-					if (pstmt != null) {
-						pstmt.close();
+					if (preparedStatement != null) {
+						preparedStatement.close();
 					}
 
 					if (connection != null) {
@@ -220,7 +226,8 @@ public class ControllerAspect {
 					logger.error(e.getMessage(), e);
 				}
 
-				logger.debug("记录日志耗时 : " + (System.currentTimeMillis() - logStartTime));
+				logger.debug(
+						"记录日志耗时 : {0}", (System.currentTimeMillis() - logStartTime));
 			}
 
 		});
@@ -231,7 +238,7 @@ public class ControllerAspect {
 
 	/**
 	 * 获取登陆信息
-	 * @return
+	 * @return SunflowerCasProfile
 	 */
 	private static SunflowerCasProfile getPrincipal() {
 		SunflowerCasProfile sunflowerCasProfile = null;

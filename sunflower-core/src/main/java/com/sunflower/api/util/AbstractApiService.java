@@ -5,8 +5,7 @@ import com.baomidou.mybatisplus.plugins.pagination.Pagination;
 import com.sunflower.api.InputPageDto;
 import com.sunflower.api.PageDto;
 import com.sunflower.api.PageResultDto;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.sunflower.exceptions.BusinessException;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ReflectionUtils;
 
@@ -18,24 +17,20 @@ import java.util.*;
  */
 public class AbstractApiService {
 
-	protected static final Logger LOGGER = LoggerFactory
-			.getLogger(AbstractApiService.class);
-
 	public AbstractApiService() {
 	}
 
+	@SuppressWarnings({ "unchecked" })
 	public static <K, V> Map<K, V> list2MapByKey(List<V> list, String property) {
 		if (list == null || CollectionUtils.isEmpty(list)) {
 			return Collections.emptyMap();
 		}
 		else {
 			Map<Object, Object> map = new LinkedHashMap<>(list.size());
-			Iterator<V> iterator = list.iterator();
-			while (iterator.hasNext()) {
-				V v = iterator.next();
+			for (V v : list) {
 				Field field = ReflectionUtils.findField(v.getClass(), property);
 				if (null == field) {
-					throw new RuntimeException(v.getClass() + "不存在的属性" + property);
+					throw new BusinessException(v.getClass() + "不存在的属性" + property);
 				}
 
 				ReflectionUtils.makeAccessible(field);
@@ -46,19 +41,18 @@ public class AbstractApiService {
 		}
 	}
 
+	@SuppressWarnings({ "unchecked" })
 	public static <T> Set<T> list2Set(List<?> list, String property) {
 		if (list == null) {
 			return Collections.emptySet();
 		}
 		else {
-			Set<T> set = new HashSet(list.size());
-			Iterator var3 = list.iterator();
+			Set<T> set = new HashSet<>(list.size());
 
-			while (var3.hasNext()) {
-				Object v = var3.next();
+			for (Object v : list) {
 				Field field = ReflectionUtils.findField(v.getClass(), property);
 				if (null == field) {
-					throw new RuntimeException(v.getClass() + "不存在属性" + property);
+					throw new BusinessException(v.getClass() + "不存在属性" + property);
 				}
 
 				ReflectionUtils.makeAccessible(field);
@@ -70,19 +64,18 @@ public class AbstractApiService {
 		}
 	}
 
+	@SuppressWarnings({ "unchecked" })
 	public static <V> List<V> listProperty(List<?> list, String property) {
 		if (list == null) {
 			return Collections.emptyList();
 		}
 		else {
-			List<V> result = new ArrayList();
-			Iterator var3 = list.iterator();
+			List<V> result = new ArrayList<>();
 
-			while (var3.hasNext()) {
-				Object v = var3.next();
+			for (Object v : list) {
 				Field field = ReflectionUtils.findField(v.getClass(), property);
 				if (null == field) {
-					throw new RuntimeException(v.getClass() + "不存在属性" + property);
+					throw new BusinessException(v.getClass() + "不存在属性" + property);
 				}
 
 				ReflectionUtils.makeAccessible(field);
@@ -96,18 +89,18 @@ public class AbstractApiService {
 
 	public <T> Page<T> request2Page(InputPageDto requestDto) {
 		return requestDto == null ? new Page()
-				: new Page(requestDto.getPageNum(), requestDto.getPageSize());
+				: new Page<>(requestDto.getPageNum(), requestDto.getPageSize());
 	}
 
 	public <K> PageResultDto<K> response2Page(Pagination page, List<K> list,
 			InputPageDto request) {
-		PageDto<K> rpage = new PageDto();
-		rpage.setList(list);
-		rpage.setPageCount(page == null ? 0L : page.getPages());
-		rpage.setPageSize(page == null ? request.getPageSize() : page.getSize());
-		rpage.setTotal(page == null ? 0L : page.getTotal());
-		rpage.setPageNum(page == null ? request.getPageNum() : page.getCurrent());
-		return PageResultDto.success(rpage);
+		PageDto<K> rPage = new PageDto<>();
+		rPage.setList(list);
+		rPage.setPageCount(page == null ? 0L : page.getPages());
+		rPage.setPageSize(page == null ? request.getPageSize() : page.getSize());
+		rPage.setTotal(page == null ? 0L : page.getTotal());
+		rPage.setPageNum(page == null ? request.getPageNum() : page.getCurrent());
+		return PageResultDto.success(rPage);
 	}
 
 }

@@ -1,10 +1,13 @@
 package com.sunflower.excel;
 
 import org.apache.poi.util.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
@@ -15,12 +18,14 @@ import java.util.Map;
 /**
  * 工具辅助类
  *
- * @Author sunflower
- * @Date 2018/1/22
+ * @author sunflower
+ * @date 2018/1/22
  */
-public class JxlsUtil {
+public final class JxlsUtil {
 
-	private static final JxlsUtil me = new JxlsUtil();
+	private static final JxlsUtil ME = new JxlsUtil();
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(JxlsUtil.class);
 
 	private JxlsUtil() {
 
@@ -31,7 +36,7 @@ public class JxlsUtil {
 	 * @return
 	 */
 	public static JxlsUtil me() {
-		return me;
+		return ME;
 	}
 
 	/**
@@ -97,7 +102,7 @@ public class JxlsUtil {
 			return dateFmt.format(date);
 		}
 		catch (Exception e) {
-			e.printStackTrace();
+			LOGGER.error(e.getMessage());
 		}
 		return null;
 	}
@@ -144,7 +149,7 @@ public class JxlsUtil {
 	 * @return
 	 */
 	public byte[] getImageData(String path) throws IOException {
-		try (InputStream ins = new FileInputStream(path)) {
+		try (InputStream ins = Files.newInputStream(Paths.get(path))) {
 			return IOUtils.toByteArray(ins);
 		}
 	}
@@ -155,7 +160,7 @@ public class JxlsUtil {
 	 * @return
 	 */
 	public String getImageType(String name) {
-		int index = name.lastIndexOf(".");
+		int index = name.lastIndexOf('.');
 		if (index > 0) {
 			return name.substring(index + 1);
 		}
@@ -194,7 +199,7 @@ public class JxlsUtil {
 	 * @return
 	 */
 	public boolean isAbsolutePath(String path) {
-		return (path.startsWith("/") || path.contains(":"));
+		return !path.startsWith("/") && !path.contains(":");
 	}
 
 	/**

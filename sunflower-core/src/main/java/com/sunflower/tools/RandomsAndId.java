@@ -35,13 +35,13 @@ public class RandomsAndId {
 					'9', 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', 'a', 's', 'd',
 					'f', 'g', 'h', 'j', 'k', 'l', 'z', 'x', 'c', 'v', 'b', 'n', 'm' };
 			Random random = new Random();
-			StringBuffer stringBuffer = new StringBuffer();
+			StringBuilder stringBuilder = new StringBuilder();
 
 			for (int i = 0; i < length; ++i) {
-				stringBuffer.append(randomChar[random.nextInt(10)]);
+				stringBuilder.append(randomChar[random.nextInt(10)]);
 			}
 
-			return stringBuffer.toString();
+			return stringBuilder.toString();
 		}
 	}
 
@@ -53,13 +53,13 @@ public class RandomsAndId {
 			char[] randomChar = new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8',
 					'9' };
 			Random random = new Random();
-			StringBuffer stringBuffer = new StringBuffer();
+			StringBuilder stringBuilder = new StringBuilder();
 
 			for (int i = 0; i < length; ++i) {
-				stringBuffer.append(randomChar[random.nextInt(10)]);
+				stringBuilder.append(randomChar[random.nextInt(10)]);
 			}
 
-			return stringBuffer.toString();
+			return stringBuilder.toString();
 		}
 	}
 

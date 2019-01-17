@@ -56,9 +56,8 @@ public class TxCheckInterceptor implements MethodInterceptor {
 										|| list.contains(SqlCommandType.UPDATE));
 
 						if (flag) {
-							logger.error("您的方法标志为只读,但执行了增删改操作,请修改方法的名称定义:"
-									+ method.getDeclaringClass() + "."
-									+ method.getName());
+							logger.error("您的方法标志为只读,但执行了增删改操作,请修改方法的名称定义:{}.{}",
+									method.getDeclaringClass(), method.getName());
 						}
 					}
 				}

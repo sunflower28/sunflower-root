@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import javax.validation.constraints.Min;
+import java.util.Objects;
 
 /**
  * @author sunflower
@@ -38,44 +39,35 @@ public class InputPageDto extends InputDto {
 		this.pageSize = pageSize;
 	}
 
+	@Override
 	public String toString() {
 		return "InputPageDto(pageNum=" + this.getPageNum() + ", pageSize="
 				+ this.getPageSize() + ")";
 	}
 
+	@Override
 	public boolean equals(Object o) {
-		if (o == this) {
+		if (this == o) {
 			return true;
 		}
-		else if (!(o instanceof InputPageDto)) {
+		if (!(o instanceof InputPageDto)) {
 			return false;
 		}
-		else {
-			InputPageDto other = (InputPageDto) o;
-			if (!other.canEqual(this)) {
-				return false;
-			}
-			else if (!super.equals(o)) {
-				return false;
-			}
-			else if (this.getPageNum() != other.getPageNum()) {
-				return false;
-			}
-			else {
-				return this.getPageSize() == other.getPageSize();
-			}
+		if (!super.equals(o)) {
+			return false;
 		}
+		InputPageDto that = (InputPageDto) o;
+		return getPageNum() == that.getPageNum() && getPageSize() == that.getPageSize();
 	}
 
+	@Override
+	public int hashCode() {
+		return Objects.hash(super.hashCode(), getPageNum(), getPageSize());
+	}
+
+	@Override
 	protected boolean canEqual(Object other) {
 		return other instanceof InputPageDto;
-	}
-
-	public int hashCode() {
-		int result = super.hashCode();
-		result = result * 59 + this.getPageNum();
-		result = result * 59 + this.getPageSize();
-		return result;
 	}
 
 }

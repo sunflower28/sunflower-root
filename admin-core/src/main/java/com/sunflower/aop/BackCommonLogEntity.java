@@ -5,6 +5,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * @author sunflower
+ */
 public class BackCommonLogEntity implements Serializable {
 
 	private String url;
@@ -112,10 +115,13 @@ public class BackCommonLogEntity implements Serializable {
 
 	@Override
 	public boolean equals(Object o) {
-		if (this == o)
+		if (this == o) {
 			return true;
-		if (!(o instanceof BackCommonLogEntity))
+		}
+		if (!(o instanceof BackCommonLogEntity)) {
 			return false;
+		}
+
 		BackCommonLogEntity that = (BackCommonLogEntity) o;
 		return getDuration() == that.getDuration()
 				&& Objects.equals(getUrl(), that.getUrl())
