@@ -129,7 +129,7 @@ public class ControllerAspect {
 			}
 
 			if (sb.length() > 0 && logger.isDebugEnabled()) {
-				logger.debug("警告：{}", sb.toString());
+				logger.debug("警告：{}", sb);
 			}
 		}
 
@@ -178,9 +178,8 @@ public class ControllerAspect {
 		logEntity.setCreateBy(profile == null ? null : profile.getUserId());
 		long duration = System.currentTimeMillis() - beginTime;
 		logEntity.setDuration(duration);
-		if (logger.isDebugEnabled()) {
-			logger.debug("耗时：{0}" ,duration);
-		}
+
+		logger.debug("耗时：{}", duration);
 
 		this.executor.execute(() -> {
 			long logStartTime = System.currentTimeMillis();
@@ -226,8 +225,7 @@ public class ControllerAspect {
 					logger.error(e.getMessage(), e);
 				}
 
-				logger.debug(
-						"记录日志耗时 : {0}", (System.currentTimeMillis() - logStartTime));
+				logger.debug("记录日志耗时 : {}", System.currentTimeMillis() - logStartTime);
 			}
 
 		});

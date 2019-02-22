@@ -19,6 +19,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author sunflower
+ */
 @Configuration
 @EnableSwagger2
 @Profile({ "uat", "dev" })
@@ -29,7 +32,7 @@ public class Swagger2Configuration {
 
 	@Bean
 	public Docket buildDocket() {
-		List<Parameter> operationParameters = new ArrayList();
+		List<Parameter> operationParameters = new ArrayList<>();
 		operationParameters.add((new ParameterBuilder()).name("token").description("令牌")
 				.modelRef(new ModelRef("string")).parameterType("header").required(false)
 				.build());

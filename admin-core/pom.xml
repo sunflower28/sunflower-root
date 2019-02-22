@@ -45,6 +45,12 @@
         <dependency>
             <groupId>org.pac4j</groupId>
             <artifactId>pac4j-jwt</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>bcprov-jdk15on</artifactId>
+                    <groupId>org.bouncycastle</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>io.buji</groupId>

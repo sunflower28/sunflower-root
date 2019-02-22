@@ -1,5 +1,6 @@
 package com.sunflower.config.pac4jcas;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sunflower.config.pac4jcas.cache.redis.RedisCacheManager;
 import com.sunflower.config.pac4jcas.cache.redis.RedisSessionDAO;
 import com.sunflower.config.pac4jcas.cache.redis.SessionRedisTemplate;
@@ -34,12 +35,16 @@ import org.pac4j.cas.client.rest.CasRestFormClient;
 import org.pac4j.cas.config.CasConfiguration;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.config.Config;
+import org.pac4j.core.credentials.TokenCredentials;
+import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.pac4j.core.logout.handler.DefaultLogoutHandler;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.store.Store;
-import org.pac4j.http.client.direct.ParameterClient;
+import org.pac4j.http.client.direct.HeaderClient;
+import org.pac4j.jwt.config.encryption.EncryptionConfiguration;
 import org.pac4j.jwt.config.encryption.SecretEncryptionConfiguration;
 import org.pac4j.jwt.config.signature.SecretSignatureConfiguration;
+import org.pac4j.jwt.config.signature.SignatureConfiguration;
 import org.pac4j.jwt.credentials.authenticator.JwtAuthenticator;
 import org.pac4j.jwt.profile.JwtGenerator;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
@@ -65,40 +70,63 @@ import java.util.Map;
 @Configuration
 public class ShiroPac4jConfig extends AbstractShiroWebFilterConfiguration {
 
-	private String salt = "sunflower";
+	private String salt = "12345678901234567890123456789012";
 
 	public ShiroPac4jConfig() {
-	}
-
-	@Bean
-	protected JwtGenerator<CommonProfile> jwtGenerator() {
-		return new JwtGenerator<>(new SecretSignatureConfiguration(this.salt),
-				new SecretEncryptionConfiguration(this.salt));
-	}
-
-	@Bean
-	protected JwtAuthenticator jwtAuthenticator() {
-		JwtAuthenticator jwtAuthenticator = new JwtAuthenticator();
-		jwtAuthenticator
-				.addSignatureConfiguration(new SecretSignatureConfiguration(this.salt));
-		jwtAuthenticator
-				.addEncryptionConfiguration(new SecretEncryptionConfiguration(this.salt));
-		return jwtAuthenticator;
 	}
 
 	@Bean
 	public CasConfiguration casConfiguration(Environment env,
 			RedisTemplate<String, Object> redisTemplateObject,
 			CasProperties casProperties) {
-
-		CasConfiguration configuration = new CasConfiguration(
-				casProperties.getCasServerUrlPrefix() + "/sunflower-cas/login");
-		configuration
+		CasConfiguration casConfiguration = new CasConfiguration();
+		casConfiguration
 				.setPrefixUrl(casProperties.getCasServerUrlPrefix() + "/sunflower-cas/");
 		Store<String, Object> redisStore = new RedisStore<>(redisTemplateObject,
 				env.getActiveProfiles()[0] + "_pac4j_store_");
-		configuration.setLogoutHandler(new DefaultLogoutHandler(redisStore));
-		return configuration;
+		casConfiguration.setLogoutHandler(new DefaultLogoutHandler(redisStore));
+		return casConfiguration;
+	}
+
+	@Bean
+	public CasRestFormClient casRestFormClient(CasConfiguration casConfiguration,
+			ObjectMapper objectMapper) {
+		CasRestFormClient casRestFormClient = new CasRestFormClient();
+		casRestFormClient.setConfiguration(casConfiguration);
+		casRestFormClient.setName("rest");
+		casRestFormClient.setCredentialsExtractor(new BrcFormExtractor(objectMapper));
+		return casRestFormClient;
+	}
+
+	@Bean
+	public SignatureConfiguration signatureConfiguration() {
+		return new SecretSignatureConfiguration(this.salt);
+	}
+
+	@Bean
+	public EncryptionConfiguration encryptionConfiguration() {
+		return new SecretEncryptionConfiguration(this.salt);
+	}
+
+	@Bean
+	public JwtGenerator<CommonProfile> jwtGenerator(
+			SignatureConfiguration signatureConfiguration,
+			EncryptionConfiguration encryptionConfiguration) {
+		return new JwtGenerator<>(signatureConfiguration, encryptionConfiguration);
+	}
+
+	@Bean
+	public Authenticator<TokenCredentials> jwtAuthenticator(
+			SignatureConfiguration signatureConfiguration,
+			EncryptionConfiguration encryptionConfiguration) {
+		return new JwtAuthenticator(signatureConfiguration, encryptionConfiguration);
+	}
+
+	@Bean
+	public HeaderClient headerClient(Authenticator<TokenCredentials> jwtAuthenticator) {
+		HeaderClient headerClient = new HeaderClient("token", jwtAuthenticator);
+		headerClient.setName("jwt");
+		return headerClient;
 	}
 
 	@Bean
@@ -125,24 +153,23 @@ public class ShiroPac4jConfig extends AbstractShiroWebFilterConfiguration {
 			CasConfiguration casConfiguration, CasProperties casProperties) {
 		CasClient casClient = new CasClient();
 		casClient.setConfiguration(casConfiguration);
-		String applicationName = resolver.getProperty("spring.application.name");
-		if (StringUtils.isEmpty(applicationName)) {
-			throw new BusinessException("请配置项目名称");
+		String springApplicationName = "spring.application.name";
+		String springApplicationNameValue = resolver.getProperty(springApplicationName);
+		if (StringUtils.isEmpty(springApplicationNameValue)) {
+			throw new BusinessException("缺少配置" + springApplicationName);
 		}
-		casClient.setCallbackUrl(casProperties.getCasServerUrlPrefix() + "/"
-				+ applicationName.split("-")[0] + "/callback");
-		casClient.setName(resolver.getProperty("spring.application.name"));
-		return casClient;
+		else {
+			casClient.setCallbackUrl(casProperties.getCasServerUrlPrefix() + "/"
+					+ springApplicationNameValue.split("-")[0] + "/callback");
+			return casClient;
+		}
 	}
 
 	@Bean
-	protected Clients clients(CasClient casClient, CasRestFormClient casRestFormClient) {
+	public Clients clients(CasClient casClient, CasRestFormClient casRestFormClient,
+			HeaderClient headerClient) {
 		Clients clients = new Clients();
-		ParameterClient parameterClient = new ParameterClient("token",
-				this.jwtAuthenticator());
-		parameterClient.setSupportGetRequest(true);
-		parameterClient.setName("jwt");
-		clients.setClients(casClient, casRestFormClient, parameterClient);
+		clients.setClients(casClient, casRestFormClient, headerClient);
 		return clients;
 	}
 
@@ -186,7 +213,7 @@ public class ShiroPac4jConfig extends AbstractShiroWebFilterConfiguration {
 		// 设置realm
 		securityManager.setRealm(pac4jRealm);
 
-		securityManager.setSubjectFactory(subjectFactory());
+		securityManager.setSubjectFactory(subjectFactory);
 
 		// 自定义缓存实现 使用redis
 		securityManager.setCacheManager(cacheManager);
@@ -253,29 +280,22 @@ public class ShiroPac4jConfig extends AbstractShiroWebFilterConfiguration {
 	 */
 	@Bean({ "shiroFilterFactoryBean" })
 	protected ShiroFilterFactoryBean shiroFilterFactoryBean(
-			PropertyResolver propertyResolver, CasProperties casProperties,
 			WebSecurityManager securityManager,
 			ShiroFilterChainDefinition shiroFilterChainDefinition, Config config) {
 		ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
 		shiroFilterFactoryBean.setSecurityManager(securityManager);
-		shiroFilterFactoryBean
-				.setSuccessUrl(casProperties.getCasServerUrlPrefix() + "/index.html");
 		shiroFilterFactoryBean.setFilterChainDefinitionMap(
 				shiroFilterChainDefinition.getFilterChainMap());
 		Map<String, Filter> filters = shiroFilterFactoryBean.getFilters();
 		SecurityFilter securityFilter = new SecurityFilter();
 		securityFilter.setConfig(config);
-		securityFilter.setClients(
-				propertyResolver.getProperty("spring.application.name") + ",rest,jwt");
+		securityFilter.setClients(CasClient.class.getSimpleName() + ",rest,jwt");
 		filters.put(SecurityFilter.class.getSimpleName(), securityFilter);
 		LogoutFilter logoutFilter = new LogoutFilter();
 		logoutFilter.setConfig(config);
 		logoutFilter.setCentralLogout(true);
 		logoutFilter.setLocalLogout(true);
-		logoutFilter.setDefaultUrl(
-				casProperties.getCasServerUrlPrefix() + "/sunflower-cas/logout?service="
-						+ casProperties.getCasServerUrlPrefix());
-		filters.put("logout", logoutFilter);
+		filters.put("logoutFilter", logoutFilter);
 		CallbackFilter callbackFilter = new CallbackFilter();
 		callbackFilter.setConfig(config);
 		callbackFilter.setMultiProfile(false);
@@ -286,7 +306,7 @@ public class ShiroPac4jConfig extends AbstractShiroWebFilterConfiguration {
 	@Bean
 	public ShiroFilterChainDefinition shiroFilterChainDefinition() {
 		DefaultShiroFilterChainDefinition definition = new DefaultShiroFilterChainDefinition();
-		definition.addPathDefinition("/logout", "logout");
+		definition.addPathDefinition("/logout", "logoutFilter");
 		definition.addPathDefinition("/callback", "callbackFilter");
 		definition.addPathDefinition("/druid/**", SecurityFilter.class.getSimpleName());
 		definition.addPathDefinition("/a/**", SecurityFilter.class.getSimpleName());
