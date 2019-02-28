@@ -8,8 +8,8 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.log;
+import org.slf4j.logFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
@@ -28,8 +28,8 @@ import java.util.*;
 @Aspect
 public class ApiServiceValidAop {
 
-	private static final Logger LOGGER = LoggerFactory
-			.getLogger(ApiServiceValidAop.class);
+	private static final log log = logFactory
+			.getlog(ApiServiceValidAop.class);
 
 	@Autowired
 	private Validator validator;
@@ -49,7 +49,7 @@ public class ApiServiceValidAop {
 		// 验证返回类型
 		if (!Arrays.asList(this.env.getActiveProfiles()).contains("prod")
 				&& !AbstractResultDto.class.isAssignableFrom(returnType)) {
-			LOGGER.debug("请修正{}.{}的返回值类型为{}的子类", pjp.getTarget().getClass(),
+			log.debug("请修正{}.{}的返回值类型为{}的子类", pjp.getTarget().getClass(),
 					targetMethod.getName(), AbstractResultDto.class);
 		}
 

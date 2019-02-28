@@ -21,8 +21,8 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.pac4j.core.profile.CommonProfile;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.log;
+import org.slf4j.logFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -56,7 +56,7 @@ import java.util.concurrent.Executor;
 @Aspect
 public class ControllerAspect {
 
-	private static final Logger logger = LoggerFactory.getLogger(ControllerAspect.class);
+	private static final log log = logFactory.getlog(ControllerAspect.class);
 
 	@Autowired
 	private Environment env;
@@ -128,8 +128,8 @@ public class ControllerAspect {
 						method.getName()));
 			}
 
-			if (sb.length() > 0 && logger.isDebugEnabled()) {
-				logger.debug("警告：{}", sb);
+			if (sb.length() > 0 && log.isDebugEnabled()) {
+				log.debug("警告：{}", sb);
 			}
 		}
 
@@ -179,7 +179,7 @@ public class ControllerAspect {
 		long duration = System.currentTimeMillis() - beginTime;
 		logEntity.setDuration(duration);
 
-		logger.debug("耗时：{}", duration);
+		log.debug("耗时：{}", duration);
 
 		this.executor.execute(() -> {
 			long logStartTime = System.currentTimeMillis();
@@ -209,7 +209,7 @@ public class ControllerAspect {
 				preparedStatement.executeUpdate();
 			}
 			catch (Exception e) {
-				logger.error(e.getMessage(), e);
+				log.error(e.getMessage(), e);
 			}
 			finally {
 				try {
@@ -222,10 +222,10 @@ public class ControllerAspect {
 					}
 				}
 				catch (Exception e) {
-					logger.error(e.getMessage(), e);
+					log.error(e.getMessage(), e);
 				}
 
-				logger.debug("记录日志耗时 : {}", System.currentTimeMillis() - logStartTime);
+				log.debug("记录日志耗时 : {}", System.currentTimeMillis() - logStartTime);
 			}
 
 		});
@@ -261,7 +261,7 @@ public class ControllerAspect {
 			}
 		}
 		catch (Exception e) {
-			logger.error(e.getMessage(), e);
+			log.error(e.getMessage(), e);
 		}
 
 		return sunflowerCasProfile;

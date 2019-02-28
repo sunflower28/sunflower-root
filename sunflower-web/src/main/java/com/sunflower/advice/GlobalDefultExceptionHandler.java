@@ -3,8 +3,8 @@ package com.sunflower.advice;
 import com.sunflower.api.ResultDto;
 import com.sunflower.constants.error.CommonEnum;
 import com.sunflower.exceptions.BusinessException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.log;
+import org.slf4j.logFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -27,8 +27,8 @@ import java.util.Map;
 @ControllerAdvice
 public class GlobalDefultExceptionHandler {
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(GlobalDefultExceptionHandler.class);
+	private static final log log = logFactory
+			.getlog(GlobalDefultExceptionHandler.class);
 
 	public GlobalDefultExceptionHandler() {
 	}
@@ -37,7 +37,7 @@ public class GlobalDefultExceptionHandler {
 	@SuppressWarnings({ "unchecked" })
 	public ResponseEntity<ResultDto<Object>> handleMissingServletRequestParameterException(
 			BusinessException e) {
-		logger.error("系统异常：{}", e.getMessage());
+		log.error("系统异常：{}", e.getMessage());
 
 		ResultDto<Object> error = ResultDto.error(e.getCode(), e.getMessage());
 		error.setData(e.getData());
@@ -71,7 +71,7 @@ public class GlobalDefultExceptionHandler {
 			BindException.class, ValidationException.class })
 	public ResponseEntity<ResultDto<Object>> handleMissingServletRequestParameterException(
 			Exception e) {
-		logger.error("参数异常：{}", e.getMessage());
+		log.error("参数异常：{}", e.getMessage());
 		return new ResponseEntity<>(ResultDto.error(CommonEnum.HTTP_FAIL_400),
 				HttpStatus.BAD_REQUEST);
 	}
@@ -79,7 +79,7 @@ public class GlobalDefultExceptionHandler {
 	@ExceptionHandler({ HttpRequestMethodNotSupportedException.class })
 	public ResponseEntity<ResultDto<Object>> handleHttpRequestMethodNotSupportedException(
 			Exception e) {
-		logger.error("无效请求：{}", e.getMessage());
+		log.error("无效请求：{}", e.getMessage());
 		return new ResponseEntity<>(ResultDto.error(CommonEnum.HTTP_FAIL_405),
 				HttpStatus.METHOD_NOT_ALLOWED);
 	}
@@ -87,14 +87,14 @@ public class GlobalDefultExceptionHandler {
 	@ExceptionHandler({ HttpMediaTypeNotSupportedException.class })
 	public ResponseEntity<ResultDto<Object>> handleHttpMediaTypeNotSupportedException(
 			Exception e) {
-		logger.error("无效请求：{}", e.getMessage());
+		log.error("无效请求：{}", e.getMessage());
 		return new ResponseEntity<>(ResultDto.error(CommonEnum.HTTP_FAIL_415),
 				HttpStatus.UNSUPPORTED_MEDIA_TYPE);
 	}
 
 	@ExceptionHandler({ Exception.class })
 	public ResponseEntity<ResultDto<Object>> handleOtherExceptions(Exception e) {
-		logger.error("系统异常，请重试：{}", e.getMessage());
+		log.error("系统异常，请重试：{}", e.getMessage());
 		return new ResponseEntity<>(ResultDto.error(CommonEnum.HTTP_FAIL_500),
 				HttpStatus.INTERNAL_SERVER_ERROR);
 	}

@@ -3,8 +3,8 @@ package com.sunflower.tx;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.apache.ibatis.mapping.SqlCommandType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.log;
+import org.slf4j.logFactory;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAttribute;
 import org.springframework.transaction.interceptor.TransactionAttributeSource;
@@ -18,8 +18,8 @@ import java.util.Set;
  */
 public class TxCheckInterceptor implements MethodInterceptor {
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(TxCheckInterceptor.class);
+	private static final log log = logFactory
+			.getlog(TxCheckInterceptor.class);
 
 	private TransactionInterceptor transactionInterceptor;
 
@@ -39,13 +39,13 @@ public class TxCheckInterceptor implements MethodInterceptor {
 				TransactionAttributeSource transactionAttributeSource = this.transactionInterceptor
 						.getTransactionAttributeSource();
 				if (null == transactionAttributeSource) {
-					logger.error("缺少声明式事务配置,无法进行事务检查️");
+					log.error("缺少声明式事务配置,无法进行事务检查️");
 				}
 				else {
 					TransactionAttribute attr = transactionAttributeSource
 							.getTransactionAttribute(method, method.getDeclaringClass());
 					if (null == attr) {
-						logger.error("缺少声明式事务配置,无法进行事务检查️");
+						log.error("缺少声明式事务配置,无法进行事务检查️");
 					}
 					else {
 						Set<SqlCommandType> list = TxServiceHelper.get();
@@ -56,7 +56,7 @@ public class TxCheckInterceptor implements MethodInterceptor {
 										|| list.contains(SqlCommandType.UPDATE));
 
 						if (flag) {
-							logger.error("您的方法标志为只读,但执行了增删改操作,请修改方法的名称定义:{}.{}",
+							log.error("您的方法标志为只读,但执行了增删改操作,请修改方法的名称定义:{}.{}",
 									method.getDeclaringClass(), method.getName());
 						}
 					}

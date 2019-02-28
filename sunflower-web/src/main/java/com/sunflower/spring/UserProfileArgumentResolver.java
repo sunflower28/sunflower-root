@@ -6,9 +6,9 @@ import com.sunflower.exceptions.BusinessException;
 import com.sunflower.token.TokenUtil;
 import com.sunflower.token.UserProfile;
 import com.sunflower.util.SunflowerTokenUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.MethodParameter;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
@@ -20,10 +20,8 @@ import java.lang.reflect.Method;
 /**
  * @author sunflower 自定义参数解析--token--用于登陆--前后端交互
  */
+@Slf4j
 public class UserProfileArgumentResolver implements HandlerMethodArgumentResolver {
-
-	private static final Logger logger = LoggerFactory
-			.getLogger(UserProfileArgumentResolver.class);
 
 	public UserProfileArgumentResolver() {
 		// userProfileArgumentResolver
@@ -47,10 +45,9 @@ public class UserProfileArgumentResolver implements HandlerMethodArgumentResolve
 		}
 
 		String token = nativeWebRequest.getHeader("token");
-		boolean tokenIsTrue = token != null && !"".equals(token.trim())
-				&& token.split("\\.").length == 3;
+		boolean tokenIsTrue = StringUtils.hasText(token) && token.split("\\.").length == 3;
 		if (!tokenIsTrue) {
-			logger.debug("请求头中未包含token");
+			log.debug("请求头中未包含token");
 			throw new BusinessException(CommonEnum.LOGIN_TIMEOUT);
 		}
 

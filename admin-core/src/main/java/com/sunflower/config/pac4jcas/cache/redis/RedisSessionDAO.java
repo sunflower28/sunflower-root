@@ -3,8 +3,8 @@ package com.sunflower.config.pac4jcas.cache.redis;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.mgt.ValidatingSession;
 import org.apache.shiro.session.mgt.eis.AbstractSessionDAO;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.log;
+import org.slf4j.logFactory;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -13,7 +13,7 @@ import java.util.Set;
 
 public class RedisSessionDAO extends AbstractSessionDAO {
 
-	private static final Logger logger = LoggerFactory.getLogger(RedisSessionDAO.class);
+	private static final log log = logFactory.getlog(RedisSessionDAO.class);
 
 	private SessionRedisTemplate sessionRedisTemplateSession;
 
@@ -34,7 +34,7 @@ public class RedisSessionDAO extends AbstractSessionDAO {
 	public void update(Session session) {
 		if (session instanceof ValidatingSession
 				&& !((ValidatingSession) session).isValid()) {
-			logger.debug("=> Invalid session.");
+			log.debug("=> Invalid session.");
 			this.delete(session);
 		}
 		else {
@@ -57,7 +57,7 @@ public class RedisSessionDAO extends AbstractSessionDAO {
 					.set(this.getKey(session.getId()), session);
 		}
 		else {
-			logger.debug("session or session id is null");
+			log.debug("session or session id is null");
 		}
 	}
 
@@ -67,14 +67,14 @@ public class RedisSessionDAO extends AbstractSessionDAO {
 			this.sessionRedisTemplateSession.delete(this.getKey(session.getId()));
 		}
 		else {
-			logger.debug("session or session id is null");
+			log.debug("session or session id is null");
 		}
 	}
 
 	@Override
 	protected Session doReadSession(Serializable sessionId) {
 		if (sessionId == null) {
-			logger.debug("session id is null");
+			log.debug("session id is null");
 			return null;
 		}
 		else {
@@ -87,7 +87,7 @@ public class RedisSessionDAO extends AbstractSessionDAO {
 	public Session readSession(Serializable sessionId) {
 		Session s = this.doReadSession(sessionId);
 		if (s == null) {
-			logger.debug("session is null");
+			log.debug("session is null");
 		}
 
 		return s;

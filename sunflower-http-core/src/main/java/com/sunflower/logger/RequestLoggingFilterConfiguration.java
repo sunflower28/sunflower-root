@@ -1,4 +1,4 @@
-package com.sunflower.logger;
+package com.sunflower.log;
 
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;

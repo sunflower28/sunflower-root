@@ -6,6 +6,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.sunflower.exceptions.BusinessException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.StringUtils;
 import sun.applet.Main;
 
 import java.util.Date;
@@ -55,10 +56,8 @@ public final class TokenUtil {
 	}
 
 	public static void main(String[] args) {
-		String token = createToken("000", 100000L);
-		log.debug(token);
-		DecodedJWT decodedJWT = parseJWT(token);
-		log.debug(decodedJWT.getSubject());
+		boolean empty = StringUtils.hasText("d");
+		System.out.println(empty);
 	}
 }
 

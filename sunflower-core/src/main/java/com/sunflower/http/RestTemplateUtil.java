@@ -4,8 +4,8 @@ import com.sunflower.constants.IEnum;
 import com.sunflower.constants.error.CommonEnum;
 import com.sunflower.util.SunflowerCookieUtil;
 import com.sunflower.util.SunflowerTokenUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.log;
+import org.slf4j.logFactory;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -21,7 +21,7 @@ import java.util.Map;
 
 public class RestTemplateUtil extends RestTemplate {
 
-	private static final Logger logger = LoggerFactory.getLogger(RestTemplateUtil.class);
+	private static final log log = logFactory.getlog(RestTemplateUtil.class);
 
 	public RestTemplateUtil() {
 	}
@@ -40,7 +40,7 @@ public class RestTemplateUtil extends RestTemplate {
 					.getBody();
 		}
 		catch (Exception var10) {
-			logger.error(String.format("接口%s调用失败,参数为%s", url, body), var10);
+			log.error(String.format("接口%s调用失败,参数为%s", url, body), var10);
 
 			try {
 				ParameterizedType parameterizedType = (ParameterizedType) responseTypeParameterizedTypeReference
@@ -50,7 +50,7 @@ public class RestTemplateUtil extends RestTemplate {
 						.newInstance(CommonEnum.HTTP_FAIL_500);
 			}
 			catch (Exception var9) {
-				logger.error(var9.getMessage(), var9);
+				log.error(var9.getMessage(), var9);
 			}
 		}
 
@@ -71,7 +71,7 @@ public class RestTemplateUtil extends RestTemplate {
 					.getBody();
 		}
 		catch (Exception var9) {
-			logger.error(String.format("接口%s调用失败,参数为%s", url, body), var9);
+			log.error(String.format("接口%s调用失败,参数为%s", url, body), var9);
 
 			try {
 				ParameterizedType parameterizedType = (ParameterizedType) responseTypeParameterizedTypeReference
@@ -81,7 +81,7 @@ public class RestTemplateUtil extends RestTemplate {
 						.newInstance(CommonEnum.HTTP_FAIL_500);
 			}
 			catch (Exception var8) {
-				logger.error(var8.getMessage(), var8);
+				log.error(var8.getMessage(), var8);
 			}
 		}
 
@@ -100,14 +100,14 @@ public class RestTemplateUtil extends RestTemplate {
 					.getBody();
 		}
 		catch (Exception var8) {
-			logger.error(String.format("接口%s调用失败,参数为%s", url, body), var8);
+			log.error(String.format("接口%s调用失败,参数为%s", url, body), var8);
 
 			try {
 				result = responseType.getConstructor(IEnum.class)
 						.newInstance(CommonEnum.HTTP_FAIL_500);
 			}
 			catch (Exception var7) {
-				logger.error(var7.getMessage(), var7);
+				log.error(var7.getMessage(), var7);
 			}
 		}
 
@@ -127,7 +127,7 @@ public class RestTemplateUtil extends RestTemplate {
 					.getBody();
 		}
 		catch (Exception var9) {
-			logger.error(String.format("接口%s调用失败,参数为%s", url, body), var9);
+			log.error(String.format("接口%s调用失败,参数为%s", url, body), var9);
 
 			try {
 				ParameterizedType parameterizedType = (ParameterizedType) responseTypeParameterizedTypeReference
@@ -137,7 +137,7 @@ public class RestTemplateUtil extends RestTemplate {
 						.newInstance(CommonEnum.HTTP_FAIL_500);
 			}
 			catch (Exception var8) {
-				logger.error(var8.getMessage(), var8);
+				log.error(var8.getMessage(), var8);
 			}
 		}
 
@@ -155,14 +155,14 @@ public class RestTemplateUtil extends RestTemplate {
 					.getBody();
 		}
 		catch (Exception var8) {
-			logger.error(String.format("接口%s调用失败,参数为%s", url, body), var8);
+			log.error(String.format("接口%s调用失败,参数为%s", url, body), var8);
 
 			try {
 				result = responseType.getConstructor(IEnum.class)
 						.newInstance(CommonEnum.HTTP_FAIL_500);
 			}
 			catch (Exception var7) {
-				logger.error(var7.getMessage(), var7);
+				log.error(var7.getMessage(), var7);
 			}
 		}
 
@@ -193,7 +193,7 @@ public class RestTemplateUtil extends RestTemplate {
 					.getBody();
 		}
 		catch (Exception var13) {
-			logger.error(String.format("接口%s调用失败,参数为%s", url, body), var13);
+			log.error(String.format("接口%s调用失败,参数为%s", url, body), var13);
 
 			try {
 				ParameterizedType parameterizedType = (ParameterizedType) responseTypeParameterizedTypeReference
@@ -203,7 +203,7 @@ public class RestTemplateUtil extends RestTemplate {
 						.newInstance(CommonEnum.HTTP_FAIL_500);
 			}
 			catch (Exception var12) {
-				logger.error(var12.getMessage(), var12);
+				log.error(var12.getMessage(), var12);
 			}
 		}
 

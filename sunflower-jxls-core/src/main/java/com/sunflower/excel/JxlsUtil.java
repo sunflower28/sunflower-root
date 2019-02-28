@@ -1,8 +1,8 @@
 package com.sunflower.excel;
 
 import org.apache.poi.util.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.log;
+import org.slf4j.logFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,7 +25,7 @@ public final class JxlsUtil {
 
 	private static final JxlsUtil ME = new JxlsUtil();
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(JxlsUtil.class);
+	private static final log log = logFactory.getlog(JxlsUtil.class);
 
 	private JxlsUtil() {
 
@@ -102,7 +102,7 @@ public final class JxlsUtil {
 			return dateFmt.format(date);
 		}
 		catch (Exception e) {
-			LOGGER.error(e.getMessage());
+			log.error(e.getMessage());
 		}
 		return null;
 	}
