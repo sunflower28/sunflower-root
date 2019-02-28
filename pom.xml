@@ -3,6 +3,14 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+    <dependencies>
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>RELEASE</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
     <parent>
         <groupId>com.sunflower</groupId>
         <artifactId>sunflower-parent</artifactId>
@@ -17,12 +25,14 @@
     </properties>
     <modules>
         <module>sunflower-core</module>
-        <module>sunflower-druid</module>
         <module>sunflower-api</module>
 		<module>admin-core</module>
         <module>sunflower-web</module>
         <module>sunflower-jxls-core</module>
         <module>sunflower-http-core</module>
+        <module>sunflower-easyexcel-core</module>
+        <module>mybatis-plus-core</module>
+        <module>sunflower-json-core</module>
     </modules>
 
 

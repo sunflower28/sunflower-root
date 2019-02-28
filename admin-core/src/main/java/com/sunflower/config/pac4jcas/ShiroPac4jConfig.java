@@ -94,7 +94,8 @@ public class ShiroPac4jConfig extends AbstractShiroWebFilterConfiguration {
 		CasRestFormClient casRestFormClient = new CasRestFormClient();
 		casRestFormClient.setConfiguration(casConfiguration);
 		casRestFormClient.setName("rest");
-		casRestFormClient.setCredentialsExtractor(new BrcFormExtractor(objectMapper));
+		casRestFormClient
+				.setCredentialsExtractor(new SunflowerFormExtractor(objectMapper));
 		return casRestFormClient;
 	}
 
@@ -127,14 +128,6 @@ public class ShiroPac4jConfig extends AbstractShiroWebFilterConfiguration {
 		HeaderClient headerClient = new HeaderClient("token", jwtAuthenticator);
 		headerClient.setName("jwt");
 		return headerClient;
-	}
-
-	@Bean
-	protected CasRestFormClient casRestFormClient(CasConfiguration casConfiguration) {
-		CasRestFormClient casRestFormClient = new CasRestFormClient();
-		casRestFormClient.setConfiguration(casConfiguration);
-		casRestFormClient.setName("rest");
-		return casRestFormClient;
 	}
 
 	@Bean
@@ -208,7 +201,7 @@ public class ShiroPac4jConfig extends AbstractShiroWebFilterConfiguration {
 	@Bean
 	public DefaultWebSecurityManager securityManager(Realm pac4jRealm,
 			SessionManager sessionManager, SubjectFactory subjectFactory,
-			CacheManager cacheManager) {
+			CacheManager cacheManager, CookieRememberMeManager cookieRememberMeManager) {
 		DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
 		// 设置realm
 		securityManager.setRealm(pac4jRealm);
@@ -220,8 +213,8 @@ public class ShiroPac4jConfig extends AbstractShiroWebFilterConfiguration {
 
 		// 自定义session管理 使用redis
 		securityManager.setSessionManager(sessionManager);
-		// 注入记住我管理器;
-		securityManager.setRememberMeManager(rememberMeManager());
+		// 注入remember-me管理器
+		securityManager.setRememberMeManager(cookieRememberMeManager);
 		return securityManager;
 	}
 
@@ -310,7 +303,7 @@ public class ShiroPac4jConfig extends AbstractShiroWebFilterConfiguration {
 		definition.addPathDefinition("/callback", "callbackFilter");
 		definition.addPathDefinition("/druid/**", SecurityFilter.class.getSimpleName());
 		definition.addPathDefinition("/a/**", SecurityFilter.class.getSimpleName());
-		definition.addPathDefinition("/swagger**", "anon");
+		definition.addPathDefinition("/swagger**", SecurityFilter.class.getSimpleName());
 		definition.addPathDefinition("/**", "anon");
 		return definition;
 	}
@@ -342,9 +335,10 @@ public class ShiroPac4jConfig extends AbstractShiroWebFilterConfiguration {
 	 * cookie管理对象;记住我功能
 	 * @return
 	 */
-	public CookieRememberMeManager rememberMeManager() {
+	@Bean
+	public CookieRememberMeManager cookieRememberMeManager(SimpleCookie simpleCookie) {
 		CookieRememberMeManager cookieRememberMeManager = new CookieRememberMeManager();
-		cookieRememberMeManager.setCookie(rememberMeCookie());
+		cookieRememberMeManager.setCookie(simpleCookie);
 		// rememberMe cookie加密的密钥 建议每个项目都不一样 默认AES算法 密钥长度(128 256 512 位)
 		cookieRememberMeManager.setCipherKey(Base64.decode("3AvVhmFLUs0KTA3Kprsdag=="));
 		return cookieRememberMeManager;
@@ -354,7 +348,8 @@ public class ShiroPac4jConfig extends AbstractShiroWebFilterConfiguration {
 	 * cookie对象;
 	 * @return
 	 */
-	public SimpleCookie rememberMeCookie() {
+	@Bean
+	public SimpleCookie simpleCookie() {
 		// 这个参数是cookie的名称，对应前端的checkbox的name = rememberMe
 		SimpleCookie simpleCookie = new SimpleCookie("rememberMe");
 		// <!-- 记住我cookie生效时间30天 ,单位秒;-->

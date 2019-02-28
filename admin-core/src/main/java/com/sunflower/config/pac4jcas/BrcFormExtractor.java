@@ -9,16 +9,19 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
-class BrcFormExtractor implements CredentialsExtractor<UsernamePasswordCredentials> {
+class SunflowerFormExtractor
+		implements CredentialsExtractor<UsernamePasswordCredentials> {
 
-	private static final Logger logger = LoggerFactory.getLogger(BrcFormExtractor.class);
+	private static final Logger logger = LoggerFactory
+			.getLogger(SunflowerFormExtractor.class);
 
 	private ObjectMapper objectMapper;
 
-	public BrcFormExtractor(ObjectMapper objectMapper) {
+	public SunflowerFormExtractor(ObjectMapper objectMapper) {
 		this.objectMapper = objectMapper;
 	}
 
+	@Override
 	public UsernamePasswordCredentials extract(WebContext context) {
 		UsernamePasswordCredentials credentials = null;
 		String requestContent = context.getRequestContent();
