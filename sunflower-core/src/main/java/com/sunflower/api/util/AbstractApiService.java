@@ -15,6 +15,7 @@ import java.util.*;
 public class AbstractApiService {
 
 	protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+
 	private static final String ERRORMSG = "不存在属性";
 
 	public AbstractApiService() {

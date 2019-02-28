@@ -10,16 +10,22 @@ import java.io.IOException;
 
 @JsonComponent
 public final class CustomerJsonComponent {
-    private CustomerJsonComponent() {
-    }
 
-    public static class TrimmingJsonDeserializer extends JsonDeserializer<String> {
-        public TrimmingJsonDeserializer() {
-        }
+	private CustomerJsonComponent() {
+	}
 
-        @Override
-        public String deserialize(JsonParser parser, DeserializationContext context) throws IOException {
-            return parser.hasToken(JsonToken.VALUE_STRING) ? parser.getValueAsString().trim() : null;
-        }
-    }
+	public static class TrimmingJsonDeserializer extends JsonDeserializer<String> {
+
+		public TrimmingJsonDeserializer() {
+		}
+
+		@Override
+		public String deserialize(JsonParser parser, DeserializationContext context)
+				throws IOException {
+			return parser.hasToken(JsonToken.VALUE_STRING)
+					? parser.getValueAsString().trim() : null;
+		}
+
+	}
+
 }

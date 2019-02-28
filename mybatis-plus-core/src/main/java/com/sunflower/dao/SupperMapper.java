@@ -7,4 +7,5 @@ import com.baomidou.mybatisplus.mapper.BaseMapper;
  * @param <T>
  */
 public interface SupperMapper<T> extends BaseMapper<T> {
+
 }

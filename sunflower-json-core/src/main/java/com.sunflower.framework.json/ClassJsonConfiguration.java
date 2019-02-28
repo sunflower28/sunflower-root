@@ -14,14 +14,20 @@ import java.util.Arrays;
  */
 @Configuration
 public class ClassJsonConfiguration {
-    public ClassJsonConfiguration() {
-    }
 
-    @Bean
-    @Primary
-    public MappingJackson2HttpMessageConverter mappingJacksonHttpMessageConverter(ObjectMapper objectMapper) {
-        MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter(objectMapper);
-        converter.setSupportedMediaTypes(Arrays.asList(MediaType.APPLICATION_JSON, new MediaType("application", "*+json"), MediaType.TEXT_PLAIN, MediaType.TEXT_HTML));
-        return converter;
-    }
+	public ClassJsonConfiguration() {
+	}
+
+	@Bean
+	@Primary
+	public MappingJackson2HttpMessageConverter mappingJacksonHttpMessageConverter(
+			ObjectMapper objectMapper) {
+		MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter(
+				objectMapper);
+		converter.setSupportedMediaTypes(Arrays.asList(MediaType.APPLICATION_JSON,
+				new MediaType("application", "*+json"), MediaType.TEXT_PLAIN,
+				MediaType.TEXT_HTML));
+		return converter;
+	}
+
 }

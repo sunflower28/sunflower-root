@@ -9,7 +9,10 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
-class SunflowerFormExtractor
+/**
+ * @author sunflower
+ */
+public class SunflowerFormExtractor
 		implements CredentialsExtractor<UsernamePasswordCredentials> {
 
 	private static final Logger logger = LoggerFactory
@@ -27,8 +30,9 @@ class SunflowerFormExtractor
 		String requestContent = context.getRequestContent();
 
 		try {
-			BrcUsernamePasswordCredentials brcCredentials = this.objectMapper
-					.readValue(requestContent, BrcUsernamePasswordCredentials.class);
+			SunflowerUsernamePasswordCredentials brcCredentials = this.objectMapper
+					.readValue(requestContent,
+							SunflowerUsernamePasswordCredentials.class);
 			if (brcCredentials != null) {
 				credentials = new UsernamePasswordCredentials(
 						brcCredentials.getUsername(), brcCredentials.getPassword());

@@ -1,14 +1,11 @@
 package com.sunflower.token;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtBuilder;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import org.springframework.util.Assert;
-import org.springframework.util.Base64Utils;
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.interfaces.DecodedJWT;
+import com.sunflower.exceptions.BusinessException;
 
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
 import java.util.Date;
 
 /**
@@ -16,32 +13,42 @@ import java.util.Date;
  */
 public final class TokenUtil {
 
-	private static final String SECRET_KEY = "kkweos09dd23njslpe";
+	public static final long DEFAULT_TIMEOUT = 2592000000L;
+	private static final String SECRET = "com.sunflower.secret";
+	private static final String ISSUER = "sunflower";
 
-	public static final long DEFAULT_TIME_OUT = 2592000000L;
-
-	private TokenUtil() {
+	/**
+	 * 生成token
+	 * @param subjects 加密信息
+	 * @param ttlMillis 过期时间
+	 * @return
+	 * @throws Exception
+	 */
+	public static String createToken(String subjects, long ttlMillis) {
+		try {
+			Algorithm algorithm = Algorithm.HMAC256(SECRET);
+			return  JWT.create()
+					.withIssuer(ISSUER)
+					.withExpiresAt(new Date(System.currentTimeMillis() - ttlMillis))
+					.withSubject(subjects)
+					.sign(algorithm);
+		} catch (IllegalArgumentException e) {
+			throw new BusinessException("生成token失败");
+		}
 	}
 
-	public static SecretKey generalKey(String secretKey) {
-		byte[] encodedKey = Base64Utils.decodeFromString(secretKey);
-		return new SecretKeySpec(encodedKey, 0, encodedKey.length, "AES");
+	/**
+	 * 验证jwt，并返回数据
+	 */
+	public static DecodedJWT parseJWT(String token) {
+		Algorithm algorithm;
+		try {
+			algorithm = Algorithm.HMAC256(SECRET);
+			JWTVerifier verifier = JWT.require(algorithm).withIssuer(ISSUER).build();
+			return verifier.verify(token);
+		} catch (Exception e) {
+			throw new BusinessException("鉴权失败");
+		}
 	}
-
-	public static String createJWT(String id, String subject, long ttlMillis) {
-		Assert.isTrue(ttlMillis >= 10000L, "token 最小有效期为10秒");
-		SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
-		SecretKey key = generalKey(SECRET_KEY);
-		JwtBuilder builder = Jwts.builder()
-				.setExpiration(new Date(System.currentTimeMillis() + ttlMillis)).setId(id)
-				.setIssuedAt(new Date()).setSubject(subject)
-				.signWith(signatureAlgorithm, key);
-		return builder.compact();
-	}
-
-	public static Claims parseJWT(String jwt) {
-		SecretKey key = generalKey(SECRET_KEY);
-		return Jwts.parser().setSigningKey(key).parseClaimsJws(jwt).getBody();
-	}
-
 }
+

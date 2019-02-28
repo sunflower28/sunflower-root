@@ -15,38 +15,44 @@ import java.util.List;
  */
 @Slf4j
 public class ExcelWriterFactory extends ExcelWriter {
-    private OutputStream outputStream;
-    private int sheetNo = 1;
 
-    public ExcelWriterFactory(OutputStream outputStream, ExcelTypeEnum typeEnum) {
-        super(outputStream, typeEnum);
-    }
+	private OutputStream outputStream;
 
-    public ExcelWriterFactory write(List<? extends BaseRowModel> list, String sheetName,
-                                    BaseRowModel object) {
-        this.sheetNo++;
-        try {
-            Sheet sheet = new Sheet(sheetNo, 0, object.getClass());
-            sheet.setSheetName(sheetName);
-            this.write(list, sheet);
-        } catch (Exception ex) {
-            log.error(ex.getMessage());
-            try {
-                outputStream.flush();
-            } catch (IOException e) {
-                log.error(e.getMessage());
-            }
-        }
-        return this;
-    }
+	private int sheetNo = 1;
 
-    @Override
-    public void finish() {
-        super.finish();
-        try {
-            outputStream.flush();
-        } catch (IOException e) {
-            log.error(e.getMessage());
-        }
-    }
+	public ExcelWriterFactory(OutputStream outputStream, ExcelTypeEnum typeEnum) {
+		super(outputStream, typeEnum);
+	}
+
+	public ExcelWriterFactory write(List<? extends BaseRowModel> list, String sheetName,
+			BaseRowModel object) {
+		this.sheetNo++;
+		try {
+			Sheet sheet = new Sheet(sheetNo, 0, object.getClass());
+			sheet.setSheetName(sheetName);
+			this.write(list, sheet);
+		}
+		catch (Exception ex) {
+			log.error(ex.getMessage());
+			try {
+				outputStream.flush();
+			}
+			catch (IOException e) {
+				log.error(e.getMessage());
+			}
+		}
+		return this;
+	}
+
+	@Override
+	public void finish() {
+		super.finish();
+		try {
+			outputStream.flush();
+		}
+		catch (IOException e) {
+			log.error(e.getMessage());
+		}
+	}
+
 }

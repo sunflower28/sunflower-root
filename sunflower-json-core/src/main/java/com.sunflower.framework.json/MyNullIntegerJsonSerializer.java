@@ -7,14 +7,17 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import java.io.IOException;
 
 class MyNullIntegerJsonSerializer extends JsonSerializer<Object> {
-    MyNullIntegerJsonSerializer() {
-    }
 
-    @Override
-    public void serialize(Object value, JsonGenerator jgen, SerializerProvider provider) throws IOException {
-        if (value == null) {
-            jgen.writeNumber(0);
-        }
+	MyNullIntegerJsonSerializer() {
+	}
 
-    }
+	@Override
+	public void serialize(Object value, JsonGenerator jgen, SerializerProvider provider)
+			throws IOException {
+		if (value == null) {
+			jgen.writeNumber(0);
+		}
+
+	}
+
 }

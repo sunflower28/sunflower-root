@@ -12,59 +12,64 @@ import java.util.List;
 import java.util.Set;
 
 public class MyBeanSerializerModifier extends BeanSerializerModifier {
-    private JsonSerializer<Object> nullArrayJsonSerializer = new MyNullArrayJsonSerializer();
-    private JsonSerializer<Object> nullStringJsonSerializer = new MyNullStringJsonSerializer();
-    private JsonSerializer<Object> nullIntegerJsonSerializer = new MyNullIntegerJsonSerializer();
 
-    public MyBeanSerializerModifier() {
-    }
+	private JsonSerializer<Object> nullArrayJsonSerializer = new MyNullArrayJsonSerializer();
 
-    @Override
-    public List<BeanPropertyWriter> changeProperties(SerializationConfig config, BeanDescription beanDesc, List<BeanPropertyWriter> beanProperties) {
-        Iterator var4 = beanProperties.iterator();
+	private JsonSerializer<Object> nullStringJsonSerializer = new MyNullStringJsonSerializer();
 
-        while(var4.hasNext()) {
-            BeanPropertyWriter writer = (BeanPropertyWriter)var4.next();
-            if (this.isArrayType(writer)) {
-                writer.assignNullSerializer(this.defaultNullArrayJsonSerializer());
-            }
+	private JsonSerializer<Object> nullIntegerJsonSerializer = new MyNullIntegerJsonSerializer();
 
-            if (this.isStringType(writer)) {
-                writer.assignNullSerializer(this.defaultNullStringJsonSerializer());
-            }
+	public MyBeanSerializerModifier() {
+	}
 
-            if (this.isIntegerType(writer)) {
-                writer.assignNullSerializer(this.defaultNullIntegerJsonSerializer());
-            }
-        }
+	@Override
+	public List<BeanPropertyWriter> changeProperties(SerializationConfig config,
+			BeanDescription beanDesc, List<BeanPropertyWriter> beanProperties) {
+		Iterator var4 = beanProperties.iterator();
 
-        return beanProperties;
-    }
+		while (var4.hasNext()) {
+			BeanPropertyWriter writer = (BeanPropertyWriter) var4.next();
+			if (this.isArrayType(writer)) {
+				writer.assignNullSerializer(this.defaultNullArrayJsonSerializer());
+			}
 
-    protected boolean isArrayType(BeanPropertyWriter writer) {
-        JavaType type = writer.getType();
-        return type.hasRawClass(List.class) || type.hasRawClass(Set.class);
-    }
+			if (this.isStringType(writer)) {
+				writer.assignNullSerializer(this.defaultNullStringJsonSerializer());
+			}
 
-    protected boolean isStringType(BeanPropertyWriter writer) {
-        JavaType type = writer.getType();
-        return type.hasRawClass(String.class);
-    }
+			if (this.isIntegerType(writer)) {
+				writer.assignNullSerializer(this.defaultNullIntegerJsonSerializer());
+			}
+		}
 
-    protected boolean isIntegerType(BeanPropertyWriter writer) {
-        JavaType type = writer.getType();
-        return type.hasRawClass(Integer.class);
-    }
+		return beanProperties;
+	}
 
-    protected JsonSerializer<Object> defaultNullArrayJsonSerializer() {
-        return this.nullArrayJsonSerializer;
-    }
+	protected boolean isArrayType(BeanPropertyWriter writer) {
+		JavaType type = writer.getType();
+		return type.hasRawClass(List.class) || type.hasRawClass(Set.class);
+	}
 
-    protected JsonSerializer<Object> defaultNullStringJsonSerializer() {
-        return this.nullStringJsonSerializer;
-    }
+	protected boolean isStringType(BeanPropertyWriter writer) {
+		JavaType type = writer.getType();
+		return type.hasRawClass(String.class);
+	}
 
-    protected JsonSerializer<Object> defaultNullIntegerJsonSerializer() {
-        return this.nullIntegerJsonSerializer;
-    }
+	protected boolean isIntegerType(BeanPropertyWriter writer) {
+		JavaType type = writer.getType();
+		return type.hasRawClass(Integer.class);
+	}
+
+	protected JsonSerializer<Object> defaultNullArrayJsonSerializer() {
+		return this.nullArrayJsonSerializer;
+	}
+
+	protected JsonSerializer<Object> defaultNullStringJsonSerializer() {
+		return this.nullStringJsonSerializer;
+	}
+
+	protected JsonSerializer<Object> defaultNullIntegerJsonSerializer() {
+		return this.nullIntegerJsonSerializer;
+	}
+
 }

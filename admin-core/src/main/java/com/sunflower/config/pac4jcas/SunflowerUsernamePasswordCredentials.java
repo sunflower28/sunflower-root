@@ -3,13 +3,16 @@ package com.sunflower.config.pac4jcas;
 import java.io.Serializable;
 import java.util.Objects;
 
-class BrcUsernamePasswordCredentials implements Serializable {
+/**
+ * @author sunflower
+ */
+public class SunflowerUsernamePasswordCredentials implements Serializable {
 
 	private String username;
 
 	private String password;
 
-	public BrcUsernamePasswordCredentials() {
+	public SunflowerUsernamePasswordCredentials() {
 	}
 
 	public String getUsername() {
@@ -33,10 +36,10 @@ class BrcUsernamePasswordCredentials implements Serializable {
 		if (this == o) {
 			return true;
 		}
-		if (!(o instanceof BrcUsernamePasswordCredentials)) {
+		if (!(o instanceof SunflowerUsernamePasswordCredentials)) {
 			return false;
 		}
-		BrcUsernamePasswordCredentials that = (BrcUsernamePasswordCredentials) o;
+		SunflowerUsernamePasswordCredentials that = (SunflowerUsernamePasswordCredentials) o;
 		return Objects.equals(getUsername(), that.getUsername())
 				&& Objects.equals(getPassword(), that.getPassword());
 	}
