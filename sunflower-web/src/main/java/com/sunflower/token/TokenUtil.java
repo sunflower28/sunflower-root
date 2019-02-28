@@ -5,12 +5,15 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.sunflower.exceptions.BusinessException;
+import lombok.extern.slf4j.Slf4j;
+import sun.applet.Main;
 
 import java.util.Date;
 
 /**
  * @author sunflower
  */
+@Slf4j
 public final class TokenUtil {
 
 	public static final long DEFAULT_TIMEOUT = 2592000000L;
@@ -29,7 +32,7 @@ public final class TokenUtil {
 			Algorithm algorithm = Algorithm.HMAC256(SECRET);
 			return  JWT.create()
 					.withIssuer(ISSUER)
-					.withExpiresAt(new Date(System.currentTimeMillis() - ttlMillis))
+					.withExpiresAt(new Date(System.currentTimeMillis() + ttlMillis))
 					.withSubject(subjects)
 					.sign(algorithm);
 		} catch (IllegalArgumentException e) {
@@ -47,8 +50,15 @@ public final class TokenUtil {
 			JWTVerifier verifier = JWT.require(algorithm).withIssuer(ISSUER).build();
 			return verifier.verify(token);
 		} catch (Exception e) {
-			throw new BusinessException("鉴权失败");
+			throw new BusinessException("鉴权失败" + e.getMessage());
 		}
+	}
+
+	public static void main(String[] args) {
+		String token = createToken("000", 100000L);
+		log.debug(token);
+		DecodedJWT decodedJWT = parseJWT(token);
+		log.debug(decodedJWT.getSubject());
 	}
 }
 
