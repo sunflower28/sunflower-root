@@ -4,8 +4,7 @@ import com.sunflower.constants.IEnum;
 import com.sunflower.constants.error.CommonEnum;
 import com.sunflower.util.SunflowerCookieUtil;
 import com.sunflower.util.SunflowerTokenUtil;
-import org.slf4j.log;
-import org.slf4j.logFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -19,9 +18,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 public class RestTemplateUtil extends RestTemplate {
-
-	private static final log log = logFactory.getlog(RestTemplateUtil.class);
 
 	public RestTemplateUtil() {
 	}
@@ -35,12 +33,12 @@ public class RestTemplateUtil extends RestTemplate {
 			HttpHeaders httpHeaders = new HttpHeaders();
 			httpHeaders.setContentType(MediaType.APPLICATION_JSON);
 			result = this
-					.exchange(url, HttpMethod.GET, new HttpEntity(body, httpHeaders),
+					.exchange(url, HttpMethod.GET, new HttpEntity<>(body, httpHeaders),
 							responseTypeParameterizedTypeReference, uriVariables)
 					.getBody();
 		}
-		catch (Exception var10) {
-			log.error(String.format("接口%s调用失败,参数为%s", url, body), var10);
+		catch (Exception e) {
+			log.error(String.format("接口%s调用失败,参数为%s", url, body), e);
 
 			try {
 				ParameterizedType parameterizedType = (ParameterizedType) responseTypeParameterizedTypeReference
@@ -49,8 +47,8 @@ public class RestTemplateUtil extends RestTemplate {
 				result = eee.getConstructor(IEnum.class)
 						.newInstance(CommonEnum.HTTP_FAIL_500);
 			}
-			catch (Exception var9) {
-				log.error(var9.getMessage(), var9);
+			catch (Exception e2) {
+				log.error(e2.getMessage(), e2);
 			}
 		}
 
@@ -70,8 +68,8 @@ public class RestTemplateUtil extends RestTemplate {
 							responseTypeParameterizedTypeReference, new Object[0])
 					.getBody();
 		}
-		catch (Exception var9) {
-			log.error(String.format("接口%s调用失败,参数为%s", url, body), var9);
+		catch (Exception e) {
+			log.error(String.format("接口%s调用失败,参数为%s", url, body), e);
 
 			try {
 				ParameterizedType parameterizedType = (ParameterizedType) responseTypeParameterizedTypeReference
@@ -80,8 +78,8 @@ public class RestTemplateUtil extends RestTemplate {
 				result = eee.getConstructor(IEnum.class)
 						.newInstance(CommonEnum.HTTP_FAIL_500);
 			}
-			catch (Exception var8) {
-				log.error(var8.getMessage(), var8);
+			catch (Exception e2) {
+				log.error(e2.getMessage(), e2);
 			}
 		}
 
@@ -96,18 +94,18 @@ public class RestTemplateUtil extends RestTemplate {
 			httpHeaders.add("token", SunflowerTokenUtil.get());
 			httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
 			result = this.exchange(url, HttpMethod.POST,
-					new HttpEntity(body, httpHeaders), responseType, new Object[0])
+					new HttpEntity<>(body, httpHeaders), responseType, new Object[0])
 					.getBody();
 		}
-		catch (Exception var8) {
-			log.error(String.format("接口%s调用失败,参数为%s", url, body), var8);
+		catch (Exception e) {
+			log.error(String.format("接口%s调用失败,参数为%s", url, body), e);
 
 			try {
 				result = responseType.getConstructor(IEnum.class)
 						.newInstance(CommonEnum.HTTP_FAIL_500);
 			}
-			catch (Exception var7) {
-				log.error(var7.getMessage(), var7);
+			catch (Exception e2) {
+				log.error(e2.getMessage(), e2);
 			}
 		}
 
@@ -122,12 +120,12 @@ public class RestTemplateUtil extends RestTemplate {
 			HttpHeaders httpHeaders = new HttpHeaders();
 			httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
 			result = this
-					.exchange(url, HttpMethod.POST, new HttpEntity(body, httpHeaders),
+					.exchange(url, HttpMethod.POST, new HttpEntity<>(body, httpHeaders),
 							responseTypeParameterizedTypeReference, new Object[0])
 					.getBody();
 		}
-		catch (Exception var9) {
-			log.error(String.format("接口%s调用失败,参数为%s", url, body), var9);
+		catch (Exception e) {
+			log.error(String.format("接口%s调用失败,参数为%s", url, body), e);
 
 			try {
 				ParameterizedType parameterizedType = (ParameterizedType) responseTypeParameterizedTypeReference
@@ -136,8 +134,8 @@ public class RestTemplateUtil extends RestTemplate {
 				result = eee.getConstructor(IEnum.class)
 						.newInstance(CommonEnum.HTTP_FAIL_500);
 			}
-			catch (Exception var8) {
-				log.error(var8.getMessage(), var8);
+			catch (Exception e2) {
+				log.error(e2.getMessage(), e2);
 			}
 		}
 
@@ -151,18 +149,18 @@ public class RestTemplateUtil extends RestTemplate {
 			HttpHeaders httpHeaders = new HttpHeaders();
 			httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
 			result = this.exchange(url, HttpMethod.POST,
-					new HttpEntity(body, httpHeaders), responseType, new Object[0])
+					new HttpEntity<>(body, httpHeaders), responseType, new Object[0])
 					.getBody();
 		}
-		catch (Exception var8) {
-			log.error(String.format("接口%s调用失败,参数为%s", url, body), var8);
+		catch (Exception e) {
+			log.error(String.format("接口%s调用失败,参数为%s", url, body), e);
 
 			try {
 				result = responseType.getConstructor(IEnum.class)
 						.newInstance(CommonEnum.HTTP_FAIL_500);
 			}
-			catch (Exception var7) {
-				log.error(var7.getMessage(), var7);
+			catch (Exception e2) {
+				log.error(e2.getMessage(), e2);
 			}
 		}
 
@@ -176,24 +174,21 @@ public class RestTemplateUtil extends RestTemplate {
 		try {
 			HttpHeaders httpHeaders = new HttpHeaders();
 			Cookie[] cookies = SunflowerCookieUtil.get();
-			List<String> cookieNameAndValues = new ArrayList(cookies.length);
-			Cookie[] var8 = cookies;
-			int var9 = cookies.length;
+			List<String> cookieNameAndValues = new ArrayList<>(cookies.length);
 
-			for (int var10 = 0; var10 < var9; ++var10) {
-				Cookie cookie = var8[var10];
+			for (Cookie cookie : cookies) {
 				cookieNameAndValues.add(cookie.getName() + "=" + cookie.getValue());
 			}
 
 			httpHeaders.add("Cookie", String.join("; ", cookieNameAndValues));
 			httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
 			result = this
-					.exchange(url, HttpMethod.POST, new HttpEntity(body, httpHeaders),
+					.exchange(url, HttpMethod.POST, new HttpEntity<>(body, httpHeaders),
 							responseTypeParameterizedTypeReference, new Object[0])
 					.getBody();
 		}
-		catch (Exception var13) {
-			log.error(String.format("接口%s调用失败,参数为%s", url, body), var13);
+		catch (Exception e) {
+			log.error(String.format("接口%s调用失败,参数为%s", url, body), e);
 
 			try {
 				ParameterizedType parameterizedType = (ParameterizedType) responseTypeParameterizedTypeReference
@@ -202,8 +197,8 @@ public class RestTemplateUtil extends RestTemplate {
 				result = eee.getConstructor(IEnum.class)
 						.newInstance(CommonEnum.HTTP_FAIL_500);
 			}
-			catch (Exception var12) {
-				log.error(var12.getMessage(), var12);
+			catch (Exception e2) {
+				log.error(e2.getMessage(), e2);
 			}
 		}
 
