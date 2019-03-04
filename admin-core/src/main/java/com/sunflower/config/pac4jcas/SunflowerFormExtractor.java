@@ -1,22 +1,19 @@
 package com.sunflower.config.pac4jcas;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.credentials.extractor.CredentialsExtractor;
-import org.slf4j.log;
-import org.slf4j.logFactory;
 
 import java.io.IOException;
 
 /**
  * @author sunflower
  */
+@Slf4j
 public class SunflowerFormExtractor
 		implements CredentialsExtractor<UsernamePasswordCredentials> {
-
-	private static final log log = logFactory
-			.getlog(SunflowerFormExtractor.class);
 
 	private ObjectMapper objectMapper;
 
@@ -38,8 +35,8 @@ public class SunflowerFormExtractor
 						brcCredentials.getUsername(), brcCredentials.getPassword());
 			}
 		}
-		catch (IOException var5) {
-			log.error(var5.getMessage(), var5);
+		catch (IOException e) {
+			log.error(e.getMessage(), e);
 		}
 
 		return credentials;

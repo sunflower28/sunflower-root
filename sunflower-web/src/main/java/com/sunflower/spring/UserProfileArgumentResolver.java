@@ -45,7 +45,8 @@ public class UserProfileArgumentResolver implements HandlerMethodArgumentResolve
 		}
 
 		String token = nativeWebRequest.getHeader("token");
-		boolean tokenIsTrue = StringUtils.hasText(token) && token.split("\\.").length == 3;
+		boolean tokenIsTrue = StringUtils.hasText(token)
+				&& token.split("\\.").length == 3;
 		if (!tokenIsTrue) {
 			log.debug("请求头中未包含token");
 			throw new BusinessException(CommonEnum.LOGIN_TIMEOUT);

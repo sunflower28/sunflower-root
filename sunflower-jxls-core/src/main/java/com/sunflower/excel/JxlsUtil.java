@@ -1,8 +1,7 @@
 package com.sunflower.excel;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.util.IOUtils;
-import org.slf4j.log;
-import org.slf4j.logFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,11 +20,10 @@ import java.util.Map;
  * @author sunflower
  * @date 2018/1/22
  */
+@Slf4j
 public final class JxlsUtil {
 
 	private static final JxlsUtil ME = new JxlsUtil();
-
-	private static final log log = logFactory.getlog(JxlsUtil.class);
 
 	private JxlsUtil() {
 

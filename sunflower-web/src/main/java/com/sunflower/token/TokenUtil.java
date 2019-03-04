@@ -6,8 +6,6 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.sunflower.exceptions.BusinessException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.util.StringUtils;
-import sun.applet.Main;
 
 import java.util.Date;
 
@@ -18,7 +16,9 @@ import java.util.Date;
 public final class TokenUtil {
 
 	public static final long DEFAULT_TIMEOUT = 2592000000L;
+
 	private static final String SECRET = "com.sunflower.secret";
+
 	private static final String ISSUER = "sunflower";
 
 	/**
@@ -31,12 +31,11 @@ public final class TokenUtil {
 	public static String createToken(String subjects, long ttlMillis) {
 		try {
 			Algorithm algorithm = Algorithm.HMAC256(SECRET);
-			return  JWT.create()
-					.withIssuer(ISSUER)
+			return JWT.create().withIssuer(ISSUER)
 					.withExpiresAt(new Date(System.currentTimeMillis() + ttlMillis))
-					.withSubject(subjects)
-					.sign(algorithm);
-		} catch (IllegalArgumentException e) {
+					.withSubject(subjects).sign(algorithm);
+		}
+		catch (IllegalArgumentException e) {
 			throw new BusinessException("生成token失败");
 		}
 	}
@@ -50,14 +49,10 @@ public final class TokenUtil {
 			algorithm = Algorithm.HMAC256(SECRET);
 			JWTVerifier verifier = JWT.require(algorithm).withIssuer(ISSUER).build();
 			return verifier.verify(token);
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			throw new BusinessException("鉴权失败" + e.getMessage());
 		}
 	}
 
-	public static void main(String[] args) {
-		boolean empty = StringUtils.hasText("d");
-		System.out.println(empty);
-	}
 }
-

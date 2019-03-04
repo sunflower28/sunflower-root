@@ -1,19 +1,20 @@
 package com.sunflower.config.pac4jcas.cache.redis;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.mgt.ValidatingSession;
 import org.apache.shiro.session.mgt.eis.AbstractSessionDAO;
-import org.slf4j.log;
-import org.slf4j.logFactory;
 
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * @author sunflower
+ */
+@Slf4j
 public class RedisSessionDAO extends AbstractSessionDAO {
-
-	private static final log log = logFactory.getlog(RedisSessionDAO.class);
 
 	private SessionRedisTemplate sessionRedisTemplateSession;
 

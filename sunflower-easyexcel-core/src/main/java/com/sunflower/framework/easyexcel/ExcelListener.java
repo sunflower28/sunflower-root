@@ -2,6 +2,7 @@ package com.sunflower.framework.easyexcel;
 
 import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.event.AnalysisEventListener;
+import com.alibaba.excel.metadata.BaseRowModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,27 +12,25 @@ import java.util.List;
  *
  * @author sunflower
  */
-public class ExcelListener extends AnalysisEventListener {
+public class ExcelListener<T extends BaseRowModel> extends AnalysisEventListener<T> {
 
 	/**
 	 * 自定义用于暂时存储data。可以通过实例获取该值
 	 */
-	private List<Object> dataList = new ArrayList<>();
+	private List<T> dataList = new ArrayList<>();
 
 	/**
 	 * 通过 AnalysisContext 对象还可以获取当前 sheet，当前行等数据
 	 */
 	@Override
-	public void invoke(Object object, AnalysisContext context) {
+	public void invoke(T object, AnalysisContext context) {
 		// 数据存储到list，供批量处理，或后续自己业务逻辑处理。
 		dataList.add(object);
-		// 根据业务自行 do something
-		doSomething();
-
 		/*
-		 * 如数据过大，可以进行定量分批处理 if(datas.size()<=100){ datas.add(object); }else {
-		 * doSomething(); datas = new ArrayList<Object>(); }
+		 * 如数据过大，可以进行定量分批处理 if(dataList.size()<=100){ dataList.add(object); }else {
+		 * doSomething(); dataList = new ArrayList<Object>(); }
 		 */
+		doSomething();
 
 	}
 
@@ -48,12 +47,12 @@ public class ExcelListener extends AnalysisEventListener {
 		 */
 	}
 
-	public List<Object> getDataList() {
+	public List<T> getDataList() {
 		return dataList;
 	}
 
-	public void setDataList(List<Object> datas) {
-		this.dataList = datas;
+	public void setDataList(List<T> dataList) {
+		this.dataList = dataList;
 	}
 
 }

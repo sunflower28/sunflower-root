@@ -3,8 +3,7 @@ package com.sunflower.advice;
 import com.sunflower.api.ResultDto;
 import com.sunflower.constants.error.CommonEnum;
 import com.sunflower.exceptions.BusinessException;
-import org.slf4j.log;
-import org.slf4j.logFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -25,10 +24,8 @@ import java.util.Map;
  * @author sunflower 自定义全局异常处理
  */
 @ControllerAdvice
+@Slf4j
 public class GlobalDefultExceptionHandler {
-
-	private static final log log = logFactory
-			.getlog(GlobalDefultExceptionHandler.class);
 
 	public GlobalDefultExceptionHandler() {
 	}

@@ -1,10 +1,9 @@
 package com.sunflower.tx;
 
+import lombok.extern.slf4j.Slf4j;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.apache.ibatis.mapping.SqlCommandType;
-import org.slf4j.log;
-import org.slf4j.logFactory;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAttribute;
 import org.springframework.transaction.interceptor.TransactionAttributeSource;
@@ -16,10 +15,8 @@ import java.util.Set;
 /**
  * @author sunflower
  */
+@Slf4j
 public class TxCheckInterceptor implements MethodInterceptor {
-
-	private static final log log = logFactory
-			.getlog(TxCheckInterceptor.class);
 
 	private TransactionInterceptor transactionInterceptor;
 
@@ -39,13 +36,13 @@ public class TxCheckInterceptor implements MethodInterceptor {
 				TransactionAttributeSource transactionAttributeSource = this.transactionInterceptor
 						.getTransactionAttributeSource();
 				if (null == transactionAttributeSource) {
-					log.error("缺少声明式事务配置,无法进行事务检查️");
+					log.error("缺少声明式事务配置,无法进行事务检查");
 				}
 				else {
 					TransactionAttribute attr = transactionAttributeSource
 							.getTransactionAttribute(method, method.getDeclaringClass());
 					if (null == attr) {
-						log.error("缺少声明式事务配置,无法进行事务检查️");
+						log.error("缺少声明式事务配置,无法进行事务检查");
 					}
 					else {
 						Set<SqlCommandType> list = TxServiceHelper.get();

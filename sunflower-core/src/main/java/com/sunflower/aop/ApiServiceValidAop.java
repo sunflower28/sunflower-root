@@ -4,12 +4,11 @@ import com.sunflower.api.AbstractResultDto;
 import com.sunflower.api.InputDto;
 import com.sunflower.constants.error.CommonEnum;
 import com.sunflower.exceptions.BusinessException;
+import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.slf4j.log;
-import org.slf4j.logFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
@@ -26,10 +25,8 @@ import java.util.*;
  */
 @Component
 @Aspect
+@Slf4j
 public class ApiServiceValidAop {
-
-	private static final log log = logFactory
-			.getlog(ApiServiceValidAop.class);
 
 	@Autowired
 	private Validator validator;

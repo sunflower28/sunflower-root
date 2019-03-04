@@ -5,6 +5,7 @@ import com.alibaba.excel.ExcelWriter;
 import com.alibaba.excel.metadata.BaseRowModel;
 import com.alibaba.excel.metadata.Sheet;
 import com.alibaba.excel.support.ExcelTypeEnum;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
@@ -17,6 +18,7 @@ import java.util.List;
 /**
  * @author sunflower
  */
+@Slf4j
 public class ExcelUtil {
 
 	/**
@@ -65,7 +67,7 @@ public class ExcelUtil {
 		ExcelListener excelListener = new ExcelListener();
 		ExcelReader reader = getReader(excel, excelListener);
 		if (reader == null) {
-			return null;
+			return new ArrayList<>();
 		}
 		reader.read(new Sheet(sheetNo, headLineNum, rowModel.getClass()));
 		return excelListener.getDataList();
@@ -143,11 +145,13 @@ public class ExcelUtil {
 		if (flag) {
 			throw new ExcelException("文件格式错误！");
 		}
-		try (InputStream inputStream = new BufferedInputStream(excel.getInputStream())) {
+		InputStream inputStream;
+		try {
+			inputStream = new BufferedInputStream(excel.getInputStream());
 			return new ExcelReader(inputStream, null, excelListener, false);
 		}
 		catch (IOException e) {
-
+			log.error(e.getMessage());
 		}
 		return null;
 	}

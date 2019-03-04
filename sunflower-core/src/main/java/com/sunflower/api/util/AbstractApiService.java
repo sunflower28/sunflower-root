@@ -1,8 +1,7 @@
 package com.sunflower.api.util;
 
 import com.sunflower.exceptions.BusinessException;
-import org.slf4j.log;
-import org.slf4j.logFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ReflectionUtils;
 
@@ -12,9 +11,8 @@ import java.util.*;
 /**
  * @author sunflower
  */
+@Slf4j
 public class AbstractApiService {
-
-	protected final log log = logFactory.getlog(this.getClass());
 
 	private static final String ERRORMSG = "不存在属性";
 
