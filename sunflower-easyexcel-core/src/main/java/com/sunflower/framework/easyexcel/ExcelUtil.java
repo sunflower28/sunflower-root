@@ -12,6 +12,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -118,12 +120,13 @@ public class ExcelUtil {
 			HttpServletResponse response) {
 		// 创建本地文件
 		String filePath = fileName + ".xlsx";
-		File dbfFile = new File(filePath);
+		Path dbPath = Paths.get(filePath);
 		try {
-			if (!dbfFile.exists() || dbfFile.isDirectory()) {
-				Files.createFile(dbfFile.toPath());
+			if (!dbPath.toFile().exists() || dbPath.toFile().isDirectory()) {
+				Files.createFile(dbPath);
 			}
-			fileName = new String(filePath.getBytes(), StandardCharsets.ISO_8859_1);
+			fileName = new String(filePath.getBytes(StandardCharsets.UTF_8),
+					StandardCharsets.ISO_8859_1);
 			response.addHeader("Content-Disposition", "filename=" + fileName);
 			return response.getOutputStream();
 		}
@@ -140,8 +143,8 @@ public class ExcelUtil {
 	private static ExcelReader getReader(MultipartFile excel,
 			ExcelListener excelListener) {
 		String filename = excel.getOriginalFilename();
-		boolean flag = filename == null || (!filename.toLowerCase().endsWith(".xls")
-				&& !filename.toLowerCase().endsWith(".xlsx"));
+		boolean flag = filename == null || !filename.toLowerCase().endsWith(".xls")
+				|| !filename.toLowerCase().endsWith(".xlsx");
 		if (flag) {
 			throw new ExcelException("文件格式错误！");
 		}
