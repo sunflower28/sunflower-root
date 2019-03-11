@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sunflower.framework.amqp.util.CompleteCorrelationData;
 import com.sunflower.framework.amqp.util.RabbitMetaMessage;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.AmqpException;
@@ -28,6 +29,7 @@ import java.util.UUID;
  */
 
 @Component
+@Slf4j
 public class RabbitSender {
 
 	@Autowired
@@ -36,8 +38,6 @@ public class RabbitSender {
 	@Autowired
 	RabbitTemplate rabbitTemplate;
 	
-	private static final Logger logger =  LoggerFactory.getLogger(RabbitSender.class);
-
     /**扩展消息的CorrelationData，方便在回调中应用*/
 	public void setCorrelationData(String coordinator){
 	    rabbitTemplate.setCorrelationDataPostProcessor(((message, correlationData) ->
@@ -72,7 +72,7 @@ public class RabbitSender {
             rabbitTemplate.convertAndSend(rabbitMetaMessage.getExchange(), rabbitMetaMessage.getRoutingKey(),
             		message, messagePostProcessor, new CorrelationData(msgId));
 
-            logger.info("发送消息，消息ID:{}", msgId);
+            log.info("发送消息，消息ID:{}", msgId);
 
             return msgId;
         } catch (AmqpException e) {
