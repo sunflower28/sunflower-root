@@ -10,7 +10,7 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
     
-    <artifactId>sunflower-transaction-mp</artifactId>
+    <artifactId>sunflower-transaction-mq</artifactId>
 	
     <dependencies>       
 		<dependency>
