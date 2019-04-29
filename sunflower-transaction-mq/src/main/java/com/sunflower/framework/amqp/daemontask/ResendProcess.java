@@ -1,10 +1,9 @@
 package com.sunflower.framework.amqp.daemontask;
 
-
 import com.sunflower.framework.amqp.config.RabbitTemplateConfig;
 import com.sunflower.framework.amqp.sender.RabbitSender;
 import com.sunflower.framework.amqp.util.AlertSender;
-import com.sunflower.framework.amqp.util.DBCoordinator;
+import com.sunflower.framework.amqp.util.DbCoordinator;
 import com.sunflower.framework.amqp.util.MqConstants;
 import com.sunflower.framework.amqp.util.RabbitMetaMessage;
 import org.slf4j.Logger;
@@ -14,39 +13,50 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+/**
+ * @author sunflower
+ */
 @Component
 public class ResendProcess {
-    private Logger logger = LoggerFactory.getLogger(RabbitTemplateConfig.class);
 
-    @Autowired
-    DBCoordinator dbCoordinator;
+	private Logger logger = LoggerFactory.getLogger(RabbitTemplateConfig.class);
 
-    @Autowired
-    RabbitSender rabbitSender;
+	@Autowired
+	DbCoordinator<String> dbCoordinator;
 
-    @Autowired
-    AlertSender alertSender;
+	@Autowired
+	DbCoordinator<RabbitMetaMessage> dbCoordinatorRabbitMetaMessage;
 
-    /**prepare状态的消息超时告警*/
-    public void alertPrepareMsg() throws Exception{
-        List<String> messageIds = dbCoordinator.getMsgPrepare();
-        for(String messageId: messageIds){
-            alertSender.doSend(messageId);
-        }
-    }
+	@Autowired
+	RabbitSender rabbitSender;
 
+	@Autowired
+	AlertSender alertSender;
 
-    public void resendReadyMsg() throws Exception{
-        List<RabbitMetaMessage> messages = dbCoordinator.getMsgReady();
-        for(RabbitMetaMessage message: messages){
-            long msgCount = dbCoordinator.getResendValue(MqConstants.MQ_RESEND_COUNTER,message.getMessageId());
-            if( msgCount > MqConstants.MAX_RETRY_COUNT){
-                alertSender.doSend(message.getMessageId());
-            }
-            rabbitSender.send(message);
-            dbCoordinator.incrResendKey(MqConstants.MQ_RESEND_COUNTER, message.getMessageId());
-        }
-    }
+	/**
+	 * prepare状态的消息超时告警
+	 * @throws Exception
+	 */
+	public void alertPrepareMsg() throws Exception {
+		List<String> messageIds = this.dbCoordinator.getMsgPrepare();
+		for (String messageId : messageIds) {
+			alertSender.doSend(messageId);
+		}
+	}
 
+	public void resendReadyMsg() throws Exception {
+		List<RabbitMetaMessage> messages = this.dbCoordinatorRabbitMetaMessage
+				.getMsgReady();
+		for (RabbitMetaMessage message : messages) {
+			long msgCount = dbCoordinator.getResendValue(MqConstants.MQ_RESEND_COUNTER,
+					message.getMessageId());
+			if (msgCount > MqConstants.MAX_RETRY_COUNT) {
+				alertSender.doSend(message.getMessageId());
+			}
+			rabbitSender.send(message);
+			dbCoordinator.incrResendKey(MqConstants.MQ_RESEND_COUNTER,
+					message.getMessageId());
+		}
+	}
 
 }

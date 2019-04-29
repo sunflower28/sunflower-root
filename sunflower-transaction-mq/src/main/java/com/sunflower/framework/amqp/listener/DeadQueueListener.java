@@ -1,43 +1,44 @@
-//package com.itmuch.cloud.study.amqp.listener;
+// package com.itmuch.cloud.study.amqp.listener;
 //
 //
-//import AlertSender;
-//import MqConstants;
-//import com.rabbitmq.client.Channel;
-//import org.springframework.amqp.rabbit.annotation.Exchange;
-//import org.springframework.amqp.rabbit.annotation.Queue;
-//import org.springframework.amqp.rabbit.annotation.QueueBinding;
-//import org.springframework.amqp.rabbit.annotation.RabbitListener;
-//import org.springframework.amqp.support.AmqpHeaders;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.messaging.handler.annotation.Header;
-//import org.springframework.stereotype.Component;
-//import sun.plugin2.message.Message;
+// import AlertSender;
+// import MqConstants;
+// import com.rabbitmq.client.Channel;
+// import org.springframework.amqp.rabbit.annotation.Exchange;
+// import org.springframework.amqp.rabbit.annotation.Queue;
+// import org.springframework.amqp.rabbit.annotation.QueueBinding;
+// import org.springframework.amqp.rabbit.annotation.RabbitListener;
+// import org.springframework.amqp.support.AmqpHeaders;
+// import org.springframework.beans.factory.annotation.Autowired;
+// import org.springframework.messaging.handler.annotation.Header;
+// import org.springframework.stereotype.Component;
+// import sun.plugin2.message.Message;
 //
-//import java.io.IOException;
+// import java.io.IOException;
 //
-///**队列的注解实现形式，不好做统一控制
+/// **队列的注解实现形式，不好做统一控制
 // * 死信队列 1 被reject而又无法requeue 2 TTL过期 3 到达队列最大长度
 // *
 // * */
 //
 //
-//@Component
-//public class DeadQueueListener {
+// @Component
+// public class DeadQueueListener {
 //
-//    @Autowired
-//    AlertSender alertSender;
+// @Autowired
+// AlertSender alertSender;
 //
-//    @RabbitListener(bindings = @QueueBinding(
-//            value = @Queue(value = MqConstants.DLX_QUEUE, durable = "true" ),
-//            exchange =  @Exchange( value = MqConstants.DLX_EXCHANGE, ignoreDeclarationExceptions = "true"),
-//            key = MqConstants.DLX_ROUTING_KEY
-//    ))
-//    public void  deadMsgListener(Message message, Channel channel,
-//                                 @Header(AmqpHeaders.DELIVERY_TAG) long ta) throws IOException {
+// @RabbitListener(bindings = @QueueBinding(
+// value = @Queue(value = MqConstants.DLX_QUEUE, durable = "true" ),
+// exchange = @Exchange( value = MqConstants.DLX_EXCHANGE, ignoreDeclarationExceptions =
+// "true"),
+// key = MqConstants.DLX_ROUTING_KEY
+// ))
+// public void deadMsgListener(Message message, Channel channel,
+// @Header(AmqpHeaders.DELIVERY_TAG) long ta) throws IOException {
 //
-//        alertSender.doSend(message.toString());
-//        channel.basicAck(ta, false);
+// alertSender.doSend(message.toString());
+// channel.basicAck(ta, false);
 //
-//    }
-//}
+// }
+// }

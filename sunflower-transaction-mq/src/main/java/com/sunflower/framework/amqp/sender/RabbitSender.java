@@ -21,8 +21,10 @@ import org.springframework.stereotype.Component;
 import java.util.UUID;
 
 /**
- * <p><b>Description:</b> RabbitMQ消息发送者
- * <p><b>Company:</b> 
+ * <p>
+ * <b>Description:</b> RabbitMQ消息发送者
+ * <p>
+ * <b>Company:</b>
  *
  * @author created by hongda at 13:03 on 2017-10-24
  * @version V0.1
@@ -34,49 +36,55 @@ public class RabbitSender {
 
 	@Autowired
 	RedisTemplate redisTemplate;
-	
+
 	@Autowired
 	RabbitTemplate rabbitTemplate;
-	
-    /**扩展消息的CorrelationData，方便在回调中应用*/
-	public void setCorrelationData(String coordinator){
-	    rabbitTemplate.setCorrelationDataPostProcessor(((message, correlationData) ->
-          new CompleteCorrelationData(correlationData != null ? correlationData.getId() : null, coordinator)));
-    }
 
-    /**
-     * 发送MQ消息
-     * @param rabbitMetaMessage Rabbit元信息对象，用于存储交换器、队列名、消息体
-     * @return 消息ID
-     * @throws JsonProcessingException 
-     */
-    public  String send(RabbitMetaMessage rabbitMetaMessage) throws JsonProcessingException {
-        final String msgId = UUID.randomUUID().toString();
-        
+	/** 扩展消息的CorrelationData，方便在回调中应用 */
+	public void setCorrelationData(String coordinator) {
+		rabbitTemplate.setCorrelationDataPostProcessor(
+				((message, correlationData) -> new CompleteCorrelationData(
+						correlationData != null ? correlationData.getId() : null,
+						coordinator)));
+	}
 
-        MessagePostProcessor messagePostProcessor = message -> {
-            message.getMessageProperties().setMessageId(msgId);
-            // 设置消息持久化
-            message.getMessageProperties().setDeliveryMode(MessageDeliveryMode.PERSISTENT);
-            return message;
-        };
+	/**
+	 * 发送MQ消息
+	 * @param rabbitMetaMessage Rabbit元信息对象，用于存储交换器、队列名、消息体
+	 * @return 消息ID
+	 * @throws JsonProcessingException
+	 */
+	public String send(RabbitMetaMessage rabbitMetaMessage)
+			throws JsonProcessingException {
+		final String msgId = UUID.randomUUID().toString();
 
-        ObjectMapper mapper = new ObjectMapper();
-        String json = mapper.writeValueAsString(rabbitMetaMessage.getPayload());
+		MessagePostProcessor messagePostProcessor = message -> {
+			message.getMessageProperties().setMessageId(msgId);
+			// 设置消息持久化
+			message.getMessageProperties()
+					.setDeliveryMode(MessageDeliveryMode.PERSISTENT);
+			return message;
+		};
 
-        MessageProperties messageProperties = new MessageProperties();
-        messageProperties.setContentType("application/json");
-        Message message = new Message(json.getBytes(),messageProperties);
-        
-        try {
-            rabbitTemplate.convertAndSend(rabbitMetaMessage.getExchange(), rabbitMetaMessage.getRoutingKey(),
-            		message, messagePostProcessor, new CorrelationData(msgId));
+		ObjectMapper mapper = new ObjectMapper();
+		String json = mapper.writeValueAsString(rabbitMetaMessage.getPayload());
 
-            log.info("发送消息，消息ID:{}", msgId);
+		MessageProperties messageProperties = new MessageProperties();
+		messageProperties.setContentType("application/json");
+		Message message = new Message(json.getBytes(), messageProperties);
 
-            return msgId;
-        } catch (AmqpException e) {
-            throw new RuntimeException("发送RabbitMQ消息失败！", e);
-        }
-    }
+		try {
+			rabbitTemplate.convertAndSend(rabbitMetaMessage.getExchange(),
+					rabbitMetaMessage.getRoutingKey(), message, messagePostProcessor,
+					new CorrelationData(msgId));
+
+			log.info("发送消息，消息ID:{}", msgId);
+
+			return msgId;
+		}
+		catch (AmqpException e) {
+			throw new RuntimeException("发送RabbitMQ消息失败！", e);
+		}
+	}
+
 }

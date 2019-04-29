@@ -8,20 +8,22 @@ import org.springframework.lang.NonNull;
  */
 public class CompleteCorrelationData extends CorrelationData {
 
-    private String coordinator;
+	private String coordinator;
 
-    public CompleteCorrelationData(String id, String coordinator){
-        super(id);
-        this.coordinator = coordinator;
-    }
+	public CompleteCorrelationData(String id, String coordinator) {
+		super(id);
+		this.coordinator = coordinator;
+	}
 
-    public String getCoordinator(){
-        return this.coordinator;
-    }
+	public String getCoordinator() {
+		return this.coordinator;
+	}
 
-    @Override
-    @NonNull
-    public String toString(){
-        return "CompleteCorrelationData id=" + getId() +",coordinator" + this.coordinator;
-    }
+	@Override
+	@NonNull
+	public String toString() {
+		return "CompleteCorrelationData id=" + getId() + ",coordinator"
+				+ this.coordinator;
+	}
+
 }

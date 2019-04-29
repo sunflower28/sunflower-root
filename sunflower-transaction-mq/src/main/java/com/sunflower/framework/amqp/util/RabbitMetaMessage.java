@@ -1,26 +1,32 @@
 package com.sunflower.framework.amqp.util;
 
 /**
- * <p><b>Description:</b> 常量类 <p>
- * <b>Company:</b> 
+ * <p>
+ * <b>Description:</b> 常量类
+ * <p>
+ * <b>Company:</b>
  *
  * @author created by hongda at 22:49 on 2017-10-23
  * @version V0.1
  */
 public class RabbitMetaMessage {
+
 	private String messageId;
+
 	private String exchange;
+
 	private String routingKey;
+
 	private Object payload;
 
-	public String getMessageId(){
+	public String getMessageId() {
 		return this.messageId;
 	}
 
-	public void setMessageId(String messageId){
+	public void setMessageId(String messageId) {
 		this.messageId = messageId;
 	}
-	
+
 	public Object getPayload() {
 		return payload;
 	}
@@ -44,10 +50,5 @@ public class RabbitMetaMessage {
 	public void setRoutingKey(String routingKey) {
 		this.routingKey = routingKey;
 	}
-
-
-	
-	
-	
 
 }

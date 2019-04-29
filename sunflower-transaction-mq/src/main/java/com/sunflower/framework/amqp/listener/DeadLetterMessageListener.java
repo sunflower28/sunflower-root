@@ -13,44 +13,49 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class DeadLetterMessageListener implements ChannelAwareMessageListener {
-    private Logger logger = LoggerFactory.getLogger(DeadLetterMessageListener.class);
 
-    @Autowired
-    private RedisTemplate<String, Object> redisTemplate;
+	private Logger logger = LoggerFactory.getLogger(DeadLetterMessageListener.class);
 
-		/*@Autowired
-		private DeadLetterMessageMapper deadLetterMessageMapper;
+	@Autowired
+	private RedisTemplate<String, Object> redisTemplate;
 
-		@Autowired
-		private MailServiceImpl mailService;*/
+	/*
+	 * @Autowired private DeadLetterMessageMapper deadLetterMessageMapper;
+	 *
+	 * @Autowired private MailServiceImpl mailService;
+	 */
 
-    // 收件人
-		/*@Value("${recipient.email.address}")
-		private String emailRecipient;*/
+	// 收件人
+	/*
+	 * @Value("${recipient.email.address}") private String emailRecipient;
+	 */
 
-    /**
-     * Callback for processing a received Rabbit message.
-     * <p>Implementors are supposed to process the given Message,
-     * typically sending reply messages through the given Session.
-     * @param message the received AMQP message (never <code>null</code>)
-     * @param channel the underlying Rabbit Channel (never <code>null</code>)
-     * @throws Exception Any.
-     */
-    @Override
-    public void onMessage(Message message, Channel channel) throws Exception {
-        MessageProperties messageProperties = message.getMessageProperties();
-        // 消息体
-        String messageBody = new String(message.getBody());
+	/**
+	 * Callback for processing a received Rabbit message.
+	 * <p>
+	 * Implementors are supposed to process the given Message, typically sending reply
+	 * messages through the given Session.
+	 * @param message the received AMQP message (never <code>null</code>)
+	 * @param channel the underlying Rabbit Channel (never <code>null</code>)
+	 * @throws Exception Any.
+	 */
+	@Override
+	public void onMessage(Message message, Channel channel) throws Exception {
+		MessageProperties messageProperties = message.getMessageProperties();
+		// 消息体
+		String messageBody = new String(message.getBody());
 
-        logger.warn("dead letter message：{} | tag：{}", messageBody, message.getMessageProperties().getDeliveryTag());
-			/*// 入库
-			insertRecord(logKey, message);
-			// 发邮件
-			sendEmail(logKey, messageProperties.getMessageId(), messageBody);*/
+		logger.warn("dead letter message：{} | tag：{}", messageBody,
+				message.getMessageProperties().getDeliveryTag());
+		/*
+		 * // 入库 insertRecord(logKey, message); // 发邮件 sendEmail(logKey,
+		 * messageProperties.getMessageId(), messageBody);
+		 */
 
-        channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
+		channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
 
-        redisTemplate.opsForHash().delete(MqConstants.MQ_CONSUMER_RETRY_COUNT_KEY, messageProperties.getMessageId());
-    }
+		redisTemplate.opsForHash().delete(MqConstants.MQ_CONSUMER_RETRY_COUNT_KEY,
+				messageProperties.getMessageId());
+	}
 
 }

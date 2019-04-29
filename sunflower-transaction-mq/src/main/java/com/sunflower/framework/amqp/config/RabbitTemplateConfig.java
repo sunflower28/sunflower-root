@@ -13,10 +13,11 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-
 /**
- * <p><b>Description:</b> RabbitTemplate配置工厂类
- * <p><b>Company:</b> 
+ * <p>
+ * <b>Description:</b> RabbitTemplate配置工厂类
+ * <p>
+ * <b>Company:</b>
  *
  * @author created by hongda at 11:33 on 2017-07-05
  * @version V0.1
@@ -24,67 +25,76 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RabbitTemplateConfig {
 
-    private Logger logger = LoggerFactory.getLogger(RabbitTemplateConfig.class);
+	private Logger logger = LoggerFactory.getLogger(RabbitTemplateConfig.class);
 
-    private final ApplicationContext applicationContext;
+	private final ApplicationContext applicationContext;
 
-    private boolean returnFlag = false;
+	private boolean returnFlag = false;
 
-    @Autowired
-     public RabbitTemplateConfig(ApplicationContext applicationContext) {
-         this.applicationContext = applicationContext;
-     }
-	 
-     @Bean
-     public RabbitTemplate customRabbitTemplate(ConnectionFactory connectionFactory) {
+	@Autowired
+	public RabbitTemplateConfig(ApplicationContext applicationContext) {
+		this.applicationContext = applicationContext;
+	}
 
-         logger.info("==> custom rabbitTemplate, connectionFactory:"+ connectionFactory);
+	@Bean
+	public RabbitTemplate customRabbitTemplate(ConnectionFactory connectionFactory) {
 
-         RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
-         rabbitTemplate.setMessageConverter(jackson2JsonMessageConverter());
-         // mandatory 必须设置为true，ReturnCallback才会调用
-         rabbitTemplate.setMandatory(true);
-         // 消息发送到RabbitMQ交换器后接收ack回调
-         rabbitTemplate.setConfirmCallback((correlationData, ack, cause) -> {
-            if (returnFlag) {
-                logger.error("mq发送错误，无对应的的交换机,confirm回调,ack={},correlationData={} cause={} returnFlag={}",
-                        ack, correlationData, cause, returnFlag);
-            }
+		logger.info("==> custom rabbitTemplate, connectionFactory:" + connectionFactory);
 
-            logger.info("confirm回调，ack={} correlationData={} cause={}", ack, correlationData, cause);
-            String msgId = correlationData.getId();
+		RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
+		rabbitTemplate.setMessageConverter(jackson2JsonMessageConverter());
+		// mandatory 必须设置为true，ReturnCallback才会调用
+		rabbitTemplate.setMandatory(true);
+		// 消息发送到RabbitMQ交换器后接收ack回调
+		rabbitTemplate.setConfirmCallback((correlationData, ack, cause) -> {
+			if (returnFlag) {
+				logger.error(
+						"mq发送错误，无对应的的交换机,confirm回调,ack={},correlationData={} cause={} returnFlag={}",
+						ack, correlationData, cause, returnFlag);
+			}
 
-            // 只要消息能投入正确的消息队列，并持久化，就返回ack为true
-            if (ack) {
-                logger.info("消息已正确投递到队列, correlationData:{}", correlationData);
-                //清除重发缓存
-                String dbCoordinator = ((CompleteCorrelationData)correlationData).getCoordinator();
-                DbCoordinator coordinator = (DbCoordinator)applicationContext.getBean(dbCoordinator);
-                coordinator.setMsgSuccess(msgId);
-            } else {
-                logger.error("消息投递至交换机失败,业务号:{}，原因:{}",correlationData.getId(),cause);
-            }
+			logger.info("confirm回调，ack={} correlationData={} cause={}", ack,
+					correlationData, cause);
+			String msgId = correlationData.getId();
 
-        });
+			// 只要消息能投入正确的消息队列，并持久化，就返回ack为true
+			if (ack) {
+				logger.info("消息已正确投递到队列, correlationData:{}", correlationData);
+				// 清除重发缓存
+				String dbCoordinator = ((CompleteCorrelationData) correlationData)
+						.getCoordinator();
+				DbCoordinator coordinator = (DbCoordinator) applicationContext
+						.getBean(dbCoordinator);
+				coordinator.setMsgSuccess(msgId);
+			}
+			else {
+				logger.error("消息投递至交换机失败,业务号:{}，原因:{}", correlationData.getId(), cause);
+			}
 
-        //消息发送到RabbitMQ交换器，但无相应Exchange时的回调
-        rabbitTemplate.setReturnCallback((message, replyCode, replyText, exchange, routingKey) -> {
-            String messageId = message.getMessageProperties().getMessageId();
+		});
 
-            logger.error("return回调，没有找到任何匹配的队列！message id:{},replyCode{},replyText:{},"
-                    + "exchange:{},routingKey{}", messageId, replyCode, replyText, exchange, routingKey);
-            returnFlag = true;
-        });
+		// 消息发送到RabbitMQ交换器，但无相应Exchange时的回调
+		rabbitTemplate.setReturnCallback(
+				(message, replyCode, replyText, exchange, routingKey) -> {
+					String messageId = message.getMessageProperties().getMessageId();
 
-        // confirm的超时时间
-        rabbitTemplate.waitForConfirms(MqConstants.TIME_GAP);
+					logger.error(
+							"return回调，没有找到任何匹配的队列！message id:{},replyCode{},replyText:{},"
+									+ "exchange:{},routingKey{}",
+							messageId, replyCode, replyText, exchange, routingKey);
+					returnFlag = true;
+				});
 
-        return rabbitTemplate;
-    }
-	 
-	 @Bean
-     public Jackson2JsonMessageConverter jackson2JsonMessageConverter() {
-         return new Jackson2JsonMessageConverter();
+		// confirm的超时时间
+		rabbitTemplate.waitForConfirms(MqConstants.TIME_GAP);
 
-     }
+		return rabbitTemplate;
+	}
+
+	@Bean
+	public Jackson2JsonMessageConverter jackson2JsonMessageConverter() {
+		return new Jackson2JsonMessageConverter();
+
+	}
+
 }
