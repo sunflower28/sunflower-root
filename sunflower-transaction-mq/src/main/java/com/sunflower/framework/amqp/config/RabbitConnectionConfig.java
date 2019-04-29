@@ -41,20 +41,17 @@ public class RabbitConnectionConfig {
     @Value("${spring.rabbitmq.password}")
     private String password;
 
-//    @Value("${spring.rabbitmq.connection-timeout}")
-//    private int connectionTimeout;
-//
-//    @Value("${spring.rabbitmq.template.receive-timeout}")
-//    private int receiveTimeout;
+    @Value("${spring.rabbitmq.connection-timeout}")
+    private int connectionTimeout;
 
-
+    @Value("${spring.rabbitmq.template.receive-timeout}")
+    private int receiveTimeout;
 
     @Value("${spring.rabbitmq.virtual.host}")
     private String virtualHost;
 
     @Value("${spring.rabbitmq.cache.channel.size}")
     private int cacheSize;
-
 
     /**
      * 创建RabbitMQ连接工厂
@@ -74,8 +71,8 @@ public class RabbitConnectionConfig {
         factory.setUsername(username);
         factory.setPassword(password);
         factory.setVirtualHost(virtualHost);
-//      factory.setConnectionTimeout(connectionTimeout);
-//      factory.setAutomaticRecoveryEnabled(true);
+        factory.setConnectionTimeout(connectionTimeout);
+        factory.setAutomaticRecoveryEnabled(true);
         factory.afterPropertiesSet();
 
         CachingConnectionFactory connectionFactory = new CachingConnectionFactory(Objects.requireNonNull(factory.getObject()));

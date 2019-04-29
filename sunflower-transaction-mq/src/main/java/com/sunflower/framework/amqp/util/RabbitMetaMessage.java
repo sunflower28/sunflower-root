@@ -8,10 +8,10 @@ package com.sunflower.framework.amqp.util;
  * @version V0.1
  */
 public class RabbitMetaMessage {
-	String messageId;
-	String exchange;
-	String routingKey;
-	Object payload;
+	private String messageId;
+	private String exchange;
+	private String routingKey;
+	private Object payload;
 
 	public String getMessageId(){
 		return this.messageId;
@@ -24,6 +24,7 @@ public class RabbitMetaMessage {
 	public Object getPayload() {
 		return payload;
 	}
+
 	public void setPayload(Object payload) {
 		this.payload = payload;
 	}
@@ -31,12 +32,15 @@ public class RabbitMetaMessage {
 	public String getExchange() {
 		return exchange;
 	}
+
 	public void setExchange(String exchange) {
 		this.exchange = exchange;
 	}
+
 	public String getRoutingKey() {
 		return routingKey;
 	}
+
 	public void setRoutingKey(String routingKey) {
 		this.routingKey = routingKey;
 	}

@@ -1,7 +1,11 @@
 package com.sunflower.framework.amqp.util;
 
 import org.springframework.amqp.rabbit.connection.CorrelationData;
+import org.springframework.lang.NonNull;
 
+/**
+ * @author sunflower
+ */
 public class CompleteCorrelationData extends CorrelationData {
 
     private String coordinator;
@@ -16,6 +20,7 @@ public class CompleteCorrelationData extends CorrelationData {
     }
 
     @Override
+    @NonNull
     public String toString(){
         return "CompleteCorrelationData id=" + getId() +",coordinator" + this.coordinator;
     }
