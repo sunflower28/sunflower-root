@@ -56,6 +56,12 @@ public interface DbCoordinator<T> {
 	 */
 	Long incrResendKey(String key, String hashKey);
 
+	/**
+	 * 获取重发消息的值
+	 * @param key
+	 * @param hashKey
+	 * @return
+	 */
 	Long getResendValue(String key, String hashKey);
 
 }
